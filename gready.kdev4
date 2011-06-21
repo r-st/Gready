@@ -1,0 +1,4 @@
+[Project]
+Name=gready
+Manager=KDevCMakeManager
+VersionControl=kdevgit
