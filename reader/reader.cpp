@@ -47,6 +47,21 @@ QString Reader::printID() {
   return m_sid;
 }
 
+void Reader::setCookie() {
+  QNetworkCookie cookie;
+  
+  cookie.setName(QByteArray(m_sid.toAscii()));
+  cookie.setDomain(QByteArray(".google.com"));
+  cookie.setPath(QByteArray("/"));
+  cookie.setExpirationDate(QDateTime());
+  
+  QList<QNetworkCookie> list;
+  list.append(cookie);
+  m_cookieJar.setCookiesFromUrl(list, QUrl("http://www.google.com/reader/"));
+  
+  m_manager.setCookieJar(m_cookieJar);
+}
+
 
 #include "reader.moc"
 
