@@ -17,7 +17,7 @@ private:
   QString m_sid;
   QNetworkAccessManager m_manager;
   QSettings m_settings;
-  QNetworkCookieJar m_cookieJar;
+  QNetworkCookieJar* m_cookieJar;
   
   /**
    * Get session ID from Google

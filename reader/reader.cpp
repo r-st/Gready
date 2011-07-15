@@ -57,7 +57,7 @@ void Reader::setCookie() {
   
   QList<QNetworkCookie> list;
   list.append(cookie);
-  m_cookieJar.setCookiesFromUrl(list, QUrl("http://www.google.com/reader/"));
+  m_cookieJar->setCookiesFromUrl(list, QUrl("http://www.google.com/reader/"));
   
   m_manager.setCookieJar(m_cookieJar);
 }
