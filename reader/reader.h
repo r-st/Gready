@@ -18,6 +18,7 @@ private:
   QNetworkAccessManager m_manager;
   QSettings m_settings;
   QNetworkCookieJar* m_cookieJar;
+  QNetworkReply* m_reply;
   
   /**
    * Get session ID from Google
@@ -39,7 +40,7 @@ public slots:
    * Process SID retrieved from getID
    * @param reply response from server
    */
-  void authenticated(QNetworkReply* reply);
+  void authenticated();
   
 };
 

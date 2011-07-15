@@ -2,8 +2,7 @@
 
 Reader::Reader()
 {
-  //QNetworkAccessManager *m_manager = new QNetworkAccessManager();
-  connect(&m_manager, SIGNAL(finished(QNetworkReply*)), SLOT(authenticated(QNetworkReply*)));
+  //connect(&m_manager, SIGNAL(finished(QNetworkReply*)), SLOT(authenticated(QNetworkReply*)));
   
   getID();
 
@@ -25,21 +24,23 @@ void Reader::getID() {
 
   QNetworkRequest req(QUrl("https://www.google.com/accounts/ClientLogin"));
   
-  m_manager.post(req, data);
+  m_reply =  m_manager.post(req, data);
+  connect(m_reply, SIGNAL(finished()), SLOT(authenticated()));
 }
 
-void Reader::authenticated(QNetworkReply* reply) {
+void Reader::authenticated() {
   
-  if(reply->error()) { qDebug() << reply->errorString(); }
+  if(m_reply->error()) { qDebug() << m_reply->errorString(); }
   else {
     // remove key
-    QString sid = reply->readLine().remove(0,4);
+    QString sid = m_reply->readLine().remove(0,4);
     // delete newline
     sid.chop(1);
     m_sid = sid;
     qDebug()<<m_sid;
   }
   
+  m_reply->deleteLater();
 }
 
 QString Reader::printID() {
