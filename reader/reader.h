@@ -7,41 +7,48 @@
 #include <QDebug>
 #include <QCoreApplication>
 #include <QSettings>
-#include <QNetworkCookieJar>
 #include <QDateTime>
 
 class Reader : public QObject {
-  Q_OBJECT
+    Q_OBJECT
 
 private:
-  QString m_sid;
-  QNetworkAccessManager m_manager;
-  QSettings m_settings;
-  QNetworkCookieJar* m_cookieJar;
-  QNetworkReply* m_reply;
-  
-  /**
-   * Get session ID from Google
-   */
-  void getID();
-  
-  /**
-   * Set cookie with SID
-   */
-  void setCookie();
+    QString m_authKey;
+    const QString m_apiUrl;
+    QNetworkAccessManager m_manager;
+    QSettings m_settings;
+    QList<QNetworkReply*> m_replies;
+
+
+    /**
+     * Get authentication key from Google
+     */
+    void getID();
+
+    /**
+     * Set header with authentication key
+     */
+    QNetworkRequest setAuthHeader(QNetworkRequest req);
 
 public:
-  Reader();
-  QString printID();
-  void quit() { QCoreApplication::instance()->quit(); }
+    Reader();
 
 public slots:
-  /**
-   * Process SID retrieved from getID
-   * @param reply response from server
-   */
-  void authenticated();
-  
+    /**
+     * Process SID retrieved from getID
+     * @param reply response from server
+     */
+    void authenticated();
+    void taglistFinished();
+    
+    /**
+     * Get list of tags
+     */
+    void getTags();
+    void quit() {
+        QCoreApplication::instance()->quit();
+    }
+
 };
 
 #endif // READER_H
