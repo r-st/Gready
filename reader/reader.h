@@ -23,7 +23,7 @@ private:
     QNetworkAccessManager m_manager;
     QSettings m_settings;
     QList<QNetworkReply*> m_replies;
-    QList<Tag*> m_tagList;
+    QMap<QString, Tag*> m_tagList;
 
 
     /**
@@ -42,16 +42,24 @@ public:
 private slots:
     /**
      * Process SID retrieved from getID
-     * @param reply response from server
      */
     void authenticated();
+    
+    /**
+     * Process fetched tags
+     */
     void taglistFinished();
+    
+    void subscriptionFinished();
     
 public slots:
     /**
      * Get list of tags
      */
     void getTags();
+    
+    void getAllFeeds();
+    
     void quit() {
         QCoreApplication::instance()->quit();
     }
