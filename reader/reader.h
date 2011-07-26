@@ -8,6 +8,11 @@
 #include <QCoreApplication>
 #include <QSettings>
 #include <QDateTime>
+#include <QXmlStreamReader>
+
+#include "tag.h"
+
+class Tag;
 
 class Reader : public QObject {
     Q_OBJECT
@@ -18,6 +23,7 @@ private:
     QNetworkAccessManager m_manager;
     QSettings m_settings;
     QList<QNetworkReply*> m_replies;
+    QList<Tag*> m_tagList;
 
 
     /**
@@ -33,7 +39,7 @@ private:
 public:
     Reader();
 
-public slots:
+private slots:
     /**
      * Process SID retrieved from getID
      * @param reply response from server
@@ -41,6 +47,7 @@ public slots:
     void authenticated();
     void taglistFinished();
     
+public slots:
     /**
      * Get list of tags
      */

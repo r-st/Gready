@@ -39,6 +39,7 @@ void Reader::authenticated() {
     }
 
     if (reply->error()) {
+        // TODO: Process error
         qDebug() << "Auth: " << reply->errorString();
     } else {
         // skip two lines
@@ -90,18 +91,59 @@ void Reader::taglistFinished() {
         }
     }
 
-    qDebug() <<  reply->request().header(QNetworkRequest::CookieHeader).toString();
     if (reply->error()) {
+        // TODO: Process error
         qDebug() << "Tag: " << reply->errorString();
     } else {
-        qDebug() << reply->readAll();
+    
+      
+      QXmlStreamReader xml;
+      xml.addData(reply->readAll());
+      if(xml.error()) { qDebug() << xml.errorString(); }
+      while(!xml.atEnd()) {
+        if(xml.error()) { qDebug() << xml.errorString(); }
+        xml.readNext();
+        if(xml.error()) { qDebug() << xml.errorString(); }
+        if(xml.isStartElement()) {
+          if(xml.name()=="string" && xml.attributes().value("name") == "id") {
+            QString elementText = xml.readElementText();
+            QString name;
+            Tag::type type;
+            
+            // state element
+            if(elementText.contains("state/com.")) {
+              if(elementText.endsWith("starred")) {
+                type = Tag::Starred;
+                name = "Starred";
+              } else if(elementText.endsWith("broadcast")) {
+                type = Tag::Shared;
+                name = "Shared";
+              } else if(elementText.endsWith("blogger-following")) {
+                type = Tag::Following;
+                name = "Following";
+              } else {
+                type = Tag::StateUnknown;
+                QString indexStr = "/state/";
+                int index = elementText.indexOf(indexStr);
+                name = elementText.mid(index + indexStr.length());
+              }
+            // label element
+            } else {
+              type = Tag::Label;
+              QString indexStr = "/label/";
+              int index = elementText.indexOf(indexStr);
+              name = elementText.mid(index + indexStr.length());
+            }
+            // Create new tag
+            Tag* newTag = new Tag(name,elementText,type);
+            
+            // Save it
+            m_tagList.append(newTag);
+          }
+        }
+        xml.readNext();
+      }
     }
-
-    m_replies.removeAll(reply);
-    reply->deleteLater();
-
-}
-
-
+  }
 #include "reader.moc"
 
