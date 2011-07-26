@@ -29,6 +29,7 @@
 
 #include <QCoreApplication>
 #include "reader.h"
+#include "feed.h"
 
 class Reader;
 
@@ -89,11 +90,14 @@ public:
    */
   void setParrent(Reader* parrent);
   
+  void addFeed(Feed* feed);
+  
 private: 
   QString m_tagName;
   QString m_tagLabel;
   type m_tagType;
   Reader* m_parrent;
+  QMap<QString, Feed*> m_feeds; 
 };
 
 #endif // TAG_H

@@ -24,34 +24,36 @@
 */
 
 
-#include "tag.h"
+#ifndef FEED_H
+#define FEED_H
 
-void Tag::setName(QString name)
+#include <QtCore/QObject>
+
+
+class Feed : public QObject
 {
-  m_tagName = name;
-}
+  Q_OBJECT
+  
+public:
+    Feed(QString name, QString id):m_name(name), m_id(id) {};
+    Feed() {};
+    Feed(Feed &oldFeed);
+    
+    /**
+     * Get name of the feed
+     * @return name of the feed
+     */
+    QString getName() { return m_name; }
+    
+    /**
+     * Get ID of the feed
+     * @return ID
+     */
+    QString getID() { return m_id; }
+    
+private:
+  QString m_name;
+  QString m_id;
+};
 
-void Tag::setParrent(Reader* parrent)
-{
-  m_parrent = parrent;
-}
-
-void Tag::setTagLabel(QString tagLabel)
-{
-  m_tagLabel = tagLabel;
-}
-
-void Tag::setType(Tag::type tagType)
-{
-  m_tagType = tagType;
-}
-
-void Tag::addFeed(Feed* feed)
-{
-  m_feeds.insert(feed->getName(), feed);
-}
-
-#include "tag.moc"
-
-
-
+#endif // FEED_H

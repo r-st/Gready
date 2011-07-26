@@ -16,8 +16,9 @@ int main(int argc, char** argv)
     
     //gready foo;
     //foo.show();
-    QTimer::singleShot(5000, &reader, SLOT(getTags()));
-    QTimer::singleShot(11000, &reader, SLOT(quit()));
+    QTimer::singleShot(4000, &reader, SLOT(getTags()));
+    QTimer::singleShot(7000, &reader, SLOT(getAllFeeds()));
+    QTimer::singleShot(20000, &reader, SLOT(quit()));
     
     return app.exec();
 }

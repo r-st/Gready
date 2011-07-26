@@ -24,34 +24,12 @@
 */
 
 
-#include "tag.h"
+#include "feed.h"
 
-void Tag::setName(QString name)
+Feed::Feed(Feed& oldFeed)
 {
-  m_tagName = name;
+  m_id = oldFeed.m_id;
+  m_name = oldFeed.m_name;
 }
 
-void Tag::setParrent(Reader* parrent)
-{
-  m_parrent = parrent;
-}
-
-void Tag::setTagLabel(QString tagLabel)
-{
-  m_tagLabel = tagLabel;
-}
-
-void Tag::setType(Tag::type tagType)
-{
-  m_tagType = tagType;
-}
-
-void Tag::addFeed(Feed* feed)
-{
-  m_feeds.insert(feed->getName(), feed);
-}
-
-#include "tag.moc"
-
-
-
+#include "feed.moc"

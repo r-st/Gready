@@ -11,6 +11,7 @@
 #include <QXmlStreamReader>
 
 #include "tag.h"
+#include "feed.h"
 
 class Tag;
 
