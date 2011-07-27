@@ -51,7 +51,7 @@ private slots:
      */
     void taglistFinished();
     
-    void subscriptionFinished();
+    void feedsFetched();
     
 public slots:
     /**

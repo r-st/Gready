@@ -143,6 +143,9 @@ void Reader::taglistFinished() {
             xml.readNext();
         }
     }
+    
+    m_replies.removeAll(reply);
+    reply->deleteLater();
 }
 
 
@@ -159,12 +162,12 @@ void Reader::getAllFeeds()
 
 
     QNetworkReply* reply = m_manager.get(setAuthHeader(QNetworkRequest(request)));
-    connect(reply, SIGNAL(finished()), SLOT(subscriptionFinished()));
+    connect(reply, SIGNAL(finished()), SLOT(feedsFetched()));
 
     m_replies.append(reply);
 }
 
-void Reader::subscriptionFinished()
+void Reader::feedsFetched()
 {
     QNetworkReply* reply;
 
@@ -178,49 +181,50 @@ void Reader::subscriptionFinished()
     if (reply->error()) {
         // TODO: Process error
         qDebug() << "Tag: " << reply->errorString();
-    } else { 
+    } else {
         QXmlStreamReader xml;
         xml.addData(reply->readAll());
         if (xml.error()) {
             // TODO: Process error
             qDebug() << xml.errorString();
         }
-        
+
         QString id;
         QString title;
         bool category = false;
         Feed* newFeed ;
-        
+
         while (!xml.atEnd()) {
             xml.readNext();
             if (xml.isStartElement()) {
-              // feed address
-              if(xml.name() == "string" && xml.attributes().value("name") == "id" && !category) {
-                id = xml.readElementText();
-              // feed title
-              } else if(xml.name() == "string" && xml.attributes().value("name") == "title" && !category) {
-                title = xml.readElementText();
-                newFeed = new Feed(title, id);
-                qDebug() << "New feed: " << title << " " << id;
-              // category name
-              } else if(xml.name() == "string" && xml.attributes().value("name") == "id" && category) {
-                QString indexStr = "/label/";
-                QString category;
-                int index = xml.readElementText().indexOf(indexStr);
-                category= xml.readElementText().mid(index + indexStr.length());
-                
-                m_tagList[category]->addFeed(newFeed);
-                qDebug() << "Add feed " << newFeed->getName() << " to category " << category; 
-              // start of the list of categories
-              } else if (xml.name() == "list" && xml.attributes().value("name") == "categories") {
-                category = true;
-              }
-            // end of categories list
+                // feed address
+                if (xml.name() == "string" && xml.attributes().value("name") == "id" && !category) {
+                    id = xml.readElementText();
+                    // feed title
+                } else if (xml.name() == "string" && xml.attributes().value("name") == "title" && !category) {
+                    title = xml.readElementText();
+                    newFeed = new Feed(title, id);
+                    // category name
+                } else if (xml.name() == "string" && xml.attributes().value("name") == "id" && category) {
+                    QString indexStr = "/label/";
+                    QString category;
+                    QString elementText = xml.readElementText();
+                    int index = elementText.indexOf(indexStr);
+                    category= elementText.mid(index + indexStr.length());
+
+                    m_tagList[category]->addFeed(newFeed);
+                    // start of the list of categories
+                } else if (xml.name() == "list" && xml.attributes().value("name") == "categories") {
+                    category = true;
+                }
+                // end of categories list
             } else if (xml.isEndElement() && xml.name() == "list") {
-              category = false;
+                category = false;
             }
         }
     }
+    m_replies.removeAll(reply);
+    reply->deleteLater();
 }
 
 
