@@ -1,8 +1,8 @@
 #include "./reader.h"
 
-Reader::Reader():m_apiUrl("http://www.google.com/reader/api/0/") {
+Reader::Reader():m_apiUrl("http://www.google.com/reader/api/0/"), m_atomUrl("http://www.google.com/reader/atom/") {
 //connect(&m_manager, SIGNAL(finished(QNetworkReply*)), SLOT(authenticated(QNetworkReply*)));
-
+    m_signalMapper = new QSignalMapper(this);
     getID();
 
 }
@@ -143,7 +143,7 @@ void Reader::taglistFinished() {
             xml.readNext();
         }
     }
-    
+
     m_replies.removeAll(reply);
     reply->deleteLater();
 }
@@ -204,6 +204,7 @@ void Reader::feedsFetched()
                 } else if (xml.name() == "string" && xml.attributes().value("name") == "title" && !category) {
                     title = xml.readElementText();
                     newFeed = new Feed(title, id);
+                    m_feedList.insert(title, newFeed);
                     // category name
                 } else if (xml.name() == "string" && xml.attributes().value("name") == "id" && category) {
                     QString indexStr = "/label/";
@@ -220,6 +221,135 @@ void Reader::feedsFetched()
                 // end of categories list
             } else if (xml.isEndElement() && xml.name() == "list") {
                 category = false;
+            }
+        }
+    }
+    m_replies.removeAll(reply);
+    reply->deleteLater();
+}
+
+
+void Reader::getArticlesFromFeed(QString feedName)
+{
+    QString url = m_atomUrl;
+    if (!m_feedList.contains(feedName)) {
+        // TODO: error handling
+        qDebug() << "Error: bad feed name";
+    } else {
+        url.append(m_feedList[feedName]->getID());
+        qint64 timestamp = QDateTime::currentMSecsSinceEpoch()/1000;
+
+        QUrl request(url);
+        request.addQueryItem(QString("ck"), QString::number(timestamp));
+        request.addQueryItem(QString("client"), m_settings.applicationName());
+
+        if (!m_feedList[feedName]->getContinuation().isEmpty()) {
+            request.addQueryItem(QString("c"), m_feedList[feedName]->getContinuation());
+        }
+
+
+        QNetworkReply* reply = m_manager.get(setAuthHeader(QNetworkRequest(request)));
+        //connect(reply, SIGNAL(finished()), SLOT(articlesFromFeedFinished()));
+        connect(reply, SIGNAL(finished()), m_signalMapper, SLOT(map()));
+
+        m_signalMapper->setMapping(reply, feedName);
+        connect(m_signalMapper, SIGNAL(mapped(QString)), this, SLOT(articlesFromFeedFinished(QString)));
+
+        m_replies.append(reply);
+    }
+}
+void Reader::articlesFromFeedFinished(QString feedName)
+{
+
+    QNetworkReply* reply;
+
+    for (uint i = 0; i < m_replies.count(); i++) {
+        if (m_replies[i]->isFinished()) {
+            reply =m_replies[i];
+            break;
+        }
+    }
+
+    //qDebug() << feedName;
+    if (reply->error()) {
+        // TODO: Process error
+        qDebug() << "Tag: " << reply->errorString();
+    } else {
+        Feed* feed = m_feedList[feedName];
+        QXmlStreamReader xml;
+        xml.addData(reply->readAll());
+
+        QDateTime published;
+        QUrl articleUrl;
+        QString author;
+        bool inEntry = false;
+        QMimeData articleContent;
+        bool isRead = false;
+        bool isStarred = false;
+        bool isShared = false;
+        QString articleId;
+        QString title;
+
+        while (!xml.atEnd()) {
+            xml.readNext();
+            if (xml.isStartElement()) {
+                // set continuation string
+                if (xml.name() == "continuation") {
+                    feed->setContinuation(xml.readElementText());
+                }
+
+                // start of article entry
+                else if (xml.name() == "entry") {
+                    inEntry = true;
+                }
+                // process article entry
+                else if (inEntry) {
+                    if (xml.name() == "link" ) {
+                        articleUrl = xml.attributes().value("href").toString();    // url of original article
+                    }
+                    else if (xml.name() == "source") {
+                        xml.skipCurrentElement();    // skip <source> ... </source>, nothing important here
+                    }
+                    // google id of article
+                    else if (xml.name() == "id") {
+                        int index;
+                        articleId = xml.readElementText();
+                        index = articleId.lastIndexOf(":");
+                        articleId = articleId.mid(index+1);
+                    } else if (xml.name() == "title") {
+                        title = xml.readElementText();
+                    }
+                    else if (xml.name() == "published") {
+                        published = QDateTime::fromString(xml.readElementText(), Qt::ISODate);
+                    }
+                    else if (xml.name() == "name") {
+                        author = xml.readElementText();
+                    }
+                    else if (xml.name() == "summary") {
+                        articleContent.setHtml(xml.readElementText());
+                    }
+                    else if (xml.name() == "category") {
+                        if (xml.attributes().value("label") == "read") {
+                            isRead = true;
+                        }
+                        else if (xml.attributes().value("label") == "starred") {
+                            isStarred = true;
+                        }
+                        else if (xml.attributes().value("label") == "broadcast") {
+                            isShared = true;
+                        }
+                    }
+                }
+                // end of article entry
+            } else if (xml.isEndElement() && xml.name() == "entry") {
+
+                Article* newArticle = new Article(title, author, articleId, articleUrl, articleContent, published, isRead, isStarred, isShared);
+                m_feedList[feedName]->addArticle(articleId, newArticle);
+                inEntry = false;
+                title = author = articleId = "";
+                articleUrl.clear();
+                articleContent.clear();
+                isRead = isShared = isStarred = false;
             }
         }
     }

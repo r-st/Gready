@@ -24,19 +24,7 @@
 */
 
 
-#include "feed.h"
-
-Feed::Feed(Feed& oldFeed)
-{
-  m_id = oldFeed.m_id;
-  m_name = oldFeed.m_name;
-  m_parrentReader = oldFeed.m_parrentReader;
-}
-
-void Feed::getArticles()
-{
-  m_parrentReader->getArticlesFromFeed(m_name);
-}
+#include "article.h"
 
 
-#include "feed.moc"
+#include "article.moc"

@@ -9,9 +9,12 @@
 #include <QSettings>
 #include <QDateTime>
 #include <QXmlStreamReader>
+#include <QSignalMapper>
+#include <QMimeData>
 
 #include "tag.h"
 #include "feed.h"
+#include "article.h"
 
 class Tag;
 
@@ -21,10 +24,13 @@ class Reader : public QObject {
 private:
     QString m_authKey;
     const QString m_apiUrl;
+    const QString m_atomUrl;
     QNetworkAccessManager m_manager;
     QSettings m_settings;
     QList<QNetworkReply*> m_replies;
     QMap<QString, Tag*> m_tagList;
+    QMap<QString, Feed*> m_feedList;
+    QSignalMapper* m_signalMapper;
 
 
     /**
@@ -51,7 +57,15 @@ private slots:
      */
     void taglistFinished();
     
+    /**
+     * Process fetched feeds
+     */
     void feedsFetched();
+    
+    /**
+     * Process fetched articles from feed
+     */
+    void articlesFromFeedFinished(QString feedName);
     
 public slots:
     /**
@@ -59,7 +73,16 @@ public slots:
      */
     void getTags();
     
+    /**
+     * Get list of feeds
+     */
     void getAllFeeds();
+    
+    /**
+     * Fetch articles from given feed
+     * @param feedName name of the feed
+     */
+    void getArticlesFromFeed(QString feedName);
     
     void quit() {
         QCoreApplication::instance()->quit();

@@ -24,19 +24,43 @@
 */
 
 
-#include "feed.h"
+#ifndef ARTICLE_H
+#define ARTICLE_H
 
-Feed::Feed(Feed& oldFeed)
+#include <QtCore/QObject>
+#include <QDateTime>
+#include <QUrl>
+#include <QMimeData>
+
+
+class Article : public QObject
 {
-  m_id = oldFeed.m_id;
-  m_name = oldFeed.m_name;
-  m_parrentReader = oldFeed.m_parrentReader;
-}
+    Q_OBJECT;
+public:
+    Article(QString title, QString author, QString articleId, QUrl articleUrl, QMimeData &articleContent,
+            QDateTime published = QDateTime::currentDateTime(), bool isRead = false, bool isStarred = false, bool isShared = false):
+            m_title(title),
+            m_author(author),
+            m_articleId(articleId),
+            m_articleUrl(articleUrl),
+            m_published(published),
+            m_isRead(isRead),
+            m_isStarred(isStarred),
+            m_isShared(isShared)
+    {
+      m_articleContent.setHtml(articleContent.html());
+    };
 
-void Feed::getArticles()
-{
-  m_parrentReader->getArticlesFromFeed(m_name);
-}
+private:
+    QDateTime m_published;
+    QUrl m_articleUrl;
+    QString m_author;
+    QMimeData m_articleContent;
+    bool m_isRead;
+    bool m_isStarred;
+    bool m_isShared;
+    QString m_articleId;
+    QString m_title;
+};
 
-
-#include "feed.moc"
+#endif // ARTICLE_H

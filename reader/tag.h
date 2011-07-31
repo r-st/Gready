@@ -32,6 +32,7 @@
 #include "feed.h"
 
 class Reader;
+class Feed;
 
 class Tag : public QObject
 {
@@ -90,6 +91,10 @@ public:
    */
   void setParrent(Reader* parrent);
   
+  /**
+   * Adds new feed to tag
+   * @param feed feed added to tag
+   */
   void addFeed(Feed* feed);
   
 private: 

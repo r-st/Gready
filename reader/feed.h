@@ -28,15 +28,19 @@
 #define FEED_H
 
 #include <QtCore/QObject>
+#include "reader.h"
+#include "article.h"
 
+class Reader;
+class Article;
 
 class Feed : public QObject
 {
   Q_OBJECT
   
 public:
-    Feed(QString name, QString id):m_name(name), m_id(id) {};
-    Feed() {};
+    Feed(QString name, QString id, Reader* parrent = 0):m_name(name), m_id(id), m_parrentReader(parrent) {};
+    Feed(Reader* parrent = 0): m_parrentReader(parrent) {};
     Feed(Feed &oldFeed);
     
     /**
@@ -51,9 +55,37 @@ public:
      */
     QString getID() { return m_id; }
     
+    /**
+     * Get continuation ID string
+     * @return continuation ID
+     */
+    QString getContinuation() { return m_continuation; }
+    
+    void setContinuation(QString continuation) { m_continuation = continuation; }
+    
+public slots:
+  /**
+   * Fetch articles from feed
+   */
+  void getArticles();
+  
+  /**
+   * Add article to feed
+   * @param name id of the article
+   * @param article pointer to Article object
+   */
+  void addArticle(QString articleId, Article* article) { m_articles.insert(articleId, article); }
+    
 private:
+  // Tag label
   QString m_name;
+  // Tag address
   QString m_id;
+  // continuation ID string
+  QString m_continuation;
+  QMap<QString, Article*> m_articles;
+  
+  Reader* m_parrentReader;
 };
 
 #endif // FEED_H
