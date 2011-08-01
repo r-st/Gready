@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>796</width>
+    <height>596</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>7</x>
+      <y>2</y>
+      <width>781</width>
+      <height>551</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QTreeView" name="feedsView"/>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QTableView" name="articlesTableView"/>
+       </item>
+       <item>
+        <widget class="QTextBrowser" name="articleView"/>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>796</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuGready">
+    <property name="title">
+     <string>Gready</string>
+    </property>
+    <addaction name="actionQuit"/>
+   </widget>
+   <addaction name="menuGready"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+ </widget>
+ <tabstops>
+  <tabstop>feedsView</tabstop>
+  <tabstop>articlesTableView</tabstop>
+  <tabstop>articleView</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>
