@@ -56,6 +56,7 @@ void Reader::authenticated() {
     m_replies.removeAll(reply);
 
     reply->deleteLater();
+    emit authenticationDone();
 }
 
 QNetworkRequest Reader::setAuthHeader(QNetworkRequest req) {
@@ -146,6 +147,7 @@ void Reader::taglistFinished() {
 
     m_replies.removeAll(reply);
     reply->deleteLater();
+    emit tagsFetched();
 }
 
 

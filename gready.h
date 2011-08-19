@@ -2,6 +2,8 @@
 #define gready_H
 
 #include <QtGui/QMainWindow>
+#include "gui/mainwindow.h"
+#include "reader/reader.h"
 
 class gready : public QMainWindow
 {

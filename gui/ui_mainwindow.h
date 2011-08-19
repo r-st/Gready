@@ -25,7 +25,7 @@
 #include <QtGui/QTreeView>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QWidget>
-
+#include <QtGui/QTreeWidget>
 QT_BEGIN_NAMESPACE
 
 class Ui_MainWindow
@@ -35,7 +35,7 @@ public:
     QWidget *centralwidget;
     QWidget *widget;
     QHBoxLayout *horizontalLayout;
-    QTreeView *feedsView;
+    QTreeWidget *feedsView;
     QVBoxLayout *verticalLayout;
     QTableView *articlesTableView;
     QTextBrowser *articleView;
@@ -58,7 +58,7 @@ public:
         horizontalLayout = new QHBoxLayout(widget);
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
         horizontalLayout->setContentsMargins(0, 0, 0, 0);
-        feedsView = new QTreeView(widget);
+        feedsView = new QTreeWidget(widget);
         feedsView->setObjectName(QString::fromUtf8("feedsView"));
 
         horizontalLayout->addWidget(feedsView);

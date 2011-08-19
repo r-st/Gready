@@ -4,23 +4,16 @@
 #include <QtGui/QMenu>
 #include <QtGui/QMenuBar>
 #include <QtGui/QAction>
-#include "reader/reader.h"
 
 gready::gready()
 {
-    QLabel* l = new QLabel( this );
-    l->setText( "Hello World!" );
-    setCentralWidget( l );
-    
-    //Reader foobar;
-    //foobar.printID();
-    //QLabel* ll = new QLabel( this );
-    //ll->setText(foobar.printID());
-    
-    QAction* a = new QAction(this);
-    a->setText( "Quit" );
-    connect(a, SIGNAL(triggered()), SLOT(close()) );
-    menuBar()->addMenu( "File" )->addAction( a );
+    Reader* reader = new Reader;
+    reader->getTags();
+    connect(reader, SIGNAL(authenticationDone()), reader, SLOT(getTags()));
+    MainWindow* main = new MainWindow;
+    connect(reader, SIGNAL(tagsFetched()), main, SLOT(loadFeeds()));
+    main->setReader(reader);
+    main->show();
 }
 
 gready::~gready()

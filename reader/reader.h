@@ -87,6 +87,16 @@ public slots:
     void quit() {
         QCoreApplication::instance()->quit();
     }
+    
+    /**
+     * Returns list of tags
+     * @return list of tags
+     */
+    QMap<QString, Tag*> listTags() { return m_tagList; };
+    
+signals:
+  void authenticationDone();
+  void tagsFetched();
 
 };
 
