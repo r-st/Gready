@@ -92,11 +92,18 @@ public slots:
      * Returns list of tags
      * @return list of tags
      */
-    QMap<QString, Tag*> listTags() { return m_tagList; };
+    QMap<QString, Tag*> listTags() { return m_tagList; }
+    
+    /**
+     * Returns list of feeds
+     * @return list of feeds
+     */
+    QMap<QString, Feed*> listFeeds() { return m_feedList; }
     
 signals:
   void authenticationDone();
-  void tagsFetched();
+  void tagsFetchingDone();
+  void feedsFetchingDone();
 
 };
 

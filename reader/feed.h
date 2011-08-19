@@ -61,7 +61,26 @@ public:
      */
     QString getContinuation() { return m_continuation; }
     
+    /**
+     * Set continuation ID string
+     * @param continuation 
+     */
     void setContinuation(QString continuation) { m_continuation = continuation; }
+    
+    /**
+     * Sets hasCategory attribute
+     * 
+     * True if feed has some tag, false otherwise
+     * @param hasCat
+     */
+    void setHasCategory(bool hasCat) { m_hasCategory = hasCat; }
+    
+    /**
+     * Returns hasCategory attribute
+     */
+    bool hasCategory() { return m_hasCategory; }
+    
+    bool operator==(Feed &second) { if(m_id == second.m_id) { return true;} else { return false; } }
     
 public slots:
   /**
@@ -84,6 +103,9 @@ private:
   // continuation ID string
   QString m_continuation;
   QMap<QString, Article*> m_articles;
+  
+  // true when feed has some tag, false when feed is top-level
+  bool m_hasCategory;
   
   Reader* m_parrentReader;
 };

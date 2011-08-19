@@ -97,12 +97,21 @@ public:
    */
   void addFeed(Feed* feed);
   
+  /**
+   * Returns list of feeds from tag
+   * @return list of feeds
+   */
+  QMap<QString, Feed*> getFeeds() { return m_feeds; }
+  
+  bool operator==(Tag &second) { if(m_tagLabel == second.m_tagLabel) { return true; } else { return false; } }
+  
 private: 
   QString m_tagName;
   QString m_tagLabel;
   type m_tagType;
   Reader* m_parrent;
   QMap<QString, Feed*> m_feeds; 
+  
 };
 
 #endif // TAG_H

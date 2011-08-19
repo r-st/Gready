@@ -147,7 +147,7 @@ void Reader::taglistFinished() {
 
     m_replies.removeAll(reply);
     reply->deleteLater();
-    emit tagsFetched();
+    emit tagsFetchingDone();
 }
 
 
@@ -209,6 +209,7 @@ void Reader::feedsFetched()
                     m_feedList.insert(title, newFeed);
                     // category name
                 } else if (xml.name() == "string" && xml.attributes().value("name") == "id" && category) {
+                    newFeed->setHasCategory(true);
                     QString indexStr = "/label/";
                     QString category;
                     QString elementText = xml.readElementText();
@@ -228,6 +229,8 @@ void Reader::feedsFetched()
     }
     m_replies.removeAll(reply);
     reply->deleteLater();
+    
+    emit feedsFetchingDone();
 }
 
 
