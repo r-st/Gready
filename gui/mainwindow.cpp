@@ -92,6 +92,7 @@ void MainWindow::showArticlesFromFeed(Feed* feed)
     
     QString publishedDate = articlesIterator.value()->getPublished().toString();
     article->setText(2, publishedDate);
+    article->setText(3, articlesIterator.value()->getId());
     
     articlesIterator++;
   }
