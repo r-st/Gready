@@ -54,7 +54,13 @@ public:
     QString getTitle() { return m_title; }
     QString getAuthor() { return m_author; }
     QDateTime getPublished() { return m_published; }
-
+    QUrl getUrl() { return m_articleUrl; }
+    QMimeData getContent() { return m_articleContent; }
+    QString getId() { return m_articleId; }
+    bool isRead() { return m_isRead; }
+    bool isShared() { return m_isShared; }
+    bool isStarred() { return m_isStarred; }
+    
 private:
     QDateTime m_published;
     QUrl m_articleUrl;
