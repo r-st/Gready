@@ -19,6 +19,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::loadFeeds()
 {
+  ui->feedsView->clear();
   ui->feedsView->setHeaderLabel(tr("Name"));
   
   QMap<QString, Tag*> tagList = m_reader->listTags();
@@ -75,31 +76,26 @@ void MainWindow::loadArticlesFromFeed(QTreeWidgetItem* item)
 
 void MainWindow::showArticlesFromFeed(Feed* feed)
 {
-  //Feed* feed = m_reader->listFeeds().value(item->text(0));
+  ui->articlesTableView->clear();
+  QList<QString> headerLabels;
+  headerLabels << tr("Title") << tr("Author") << tr("Date");
+  ui->articlesTableView->setHeaderLabels(headerLabels);
+  
   QMap<QString, Article*> articlesList = feed->listArticles();
   QMap<QString, Article*>::iterator articlesIterator = articlesList.begin();
   
-  ui->articlesTableView->setSortingEnabled(false);
-  ui->articlesTableView->setColumnCount(3);
   
-  int row = 0;
   while(articlesIterator != articlesList.end()) {
-    ui->articlesTableView->insertRow(row);
-    QTableWidgetItem* title = new QTableWidgetItem(articlesIterator.value()->getTitle(), QTableWidgetItem::Type);
-    ui->articlesTableView->setItem(row, 0, title);
-    
-    QTableWidgetItem* author = new QTableWidgetItem(articlesIterator.value()->getAuthor(), QTableWidgetItem::Type);
-    ui->articlesTableView->setItem(row, 1, author);
+    QTreeWidgetItem* article = new QTreeWidgetItem(ui->articlesTableView);
+    article->setText(0, articlesIterator.value()->getTitle());
+    article->setText(1, articlesIterator.value()->getAuthor());
     
     QString publishedDate = articlesIterator.value()->getPublished().toString();
-    QTableWidgetItem* published = new QTableWidgetItem(publishedDate, QTableWidgetItem::Type);
-    ui->articlesTableView->setItem(row, 2, published);
+    article->setText(2, publishedDate);
     
-    row++;
     articlesIterator++;
   }
   
-  qDebug() << ui->articlesTableView->rowCount();
 }
 
 

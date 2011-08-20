@@ -37,7 +37,7 @@ public:
     QHBoxLayout *horizontalLayout;
     QTreeWidget *feedsView;
     QVBoxLayout *verticalLayout;
-    QTableWidget *articlesTableView;
+    QTreeWidget *articlesTableView;
     QTextBrowser *articleView;
     QMenuBar *menubar;
     QMenu *menuGready;
@@ -65,7 +65,7 @@ public:
 
         verticalLayout = new QVBoxLayout();
         verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
-        articlesTableView = new QTableWidget(widget);
+        articlesTableView = new QTreeWidget(widget);
         articlesTableView->setObjectName(QString::fromUtf8("articlesTableView"));
 
         verticalLayout->addWidget(articlesTableView);
