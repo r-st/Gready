@@ -50,6 +50,10 @@ public:
     {
       m_articleContent.setHtml(articleContent.html());
     };
+    
+    QString getTitle() { return m_title; }
+    QString getAuthor() { return m_author; }
+    QDateTime getPublished() { return m_published; }
 
 private:
     QDateTime m_published;

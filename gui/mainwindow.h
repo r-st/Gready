@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTreeWidgetItem>
 #include "../reader/reader.h"
 #include "../reader/tag.h"
 
@@ -26,6 +27,10 @@ private:
     
 public slots:
     void loadFeeds();
+    void loadArticlesFromFeed(QTreeWidgetItem* item);
+
+private slots:
+  void showArticlesFromFeed(Feed* feed);
 };
 
 #endif // MAINWINDOW_H

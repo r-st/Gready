@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <qmap.h>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -20,29 +19,26 @@ MainWindow::~MainWindow()
 
 void MainWindow::loadFeeds()
 {
+  ui->feedsView->setHeaderLabel(tr("Name"));
   
-  QList<QTreeWidgetItem*> tags;
   QMap<QString, Tag*> tagList = m_reader->listTags();
   QMap<QString, Tag*>::iterator iter = tagList.begin();
   
   // load tags
   while(iter != tagList.end()) {
-      QTreeWidgetItem* tag = new QTreeWidgetItem();
+      QTreeWidgetItem* tag = new QTreeWidgetItem(ui->feedsView);
       tag->setText(0, iter.value()->getName());
       
       // load feeds
-      QList<QTreeWidgetItem*> feeds;
       QMap<QString, Feed*> feedList = iter.value()->getFeeds();
       QMap<QString, Feed*>::iterator feedIter = feedList.begin();
       
       while(feedIter != feedList.end()) {
         QTreeWidgetItem* feed = new QTreeWidgetItem(tag);
         feed->setText(0, feedIter.value()->getName());
-        feeds.append(feeds);
         feedIter++;
       }
-      tag->addChildren(feeds);
-      tags.append(tag);
+      //tag->addChildren(feeds);
       iter++;
   }
   
@@ -52,20 +48,62 @@ void MainWindow::loadFeeds()
   
   while(feedIterator != feedList.end()) {
     if(!feedIterator.value()->hasCategory()) {
-        QTreeWidgetItem* feed = new QTreeWidgetItem;
+        QTreeWidgetItem* feed = new QTreeWidgetItem(ui->feedsView);
         feed->setText(0, feedIterator.value()->getName());
         
-        tags.append(feed);
     }
     feedIterator++;
   }
       
   
-  
-  ui->feedsView->insertTopLevelItems(0, tags);
-  ui->feedsView->setHeaderLabel(tr("Name"));
+  //ui->feedsView->insertTopLevelItems(0, tags);
   ui->feedsView->expandAll();
+  connect(ui->feedsView, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(loadArticlesFromFeed(QTreeWidgetItem*)));
 }
+
+void MainWindow::loadArticlesFromFeed(QTreeWidgetItem* item)
+{
+  Feed* feed = m_reader->listFeeds().value(item->text(0));
+  if(feed == NULL) {
+    // TODO
+    qDebug() << "No such feed";
+  } else {
+    feed->getArticles();
+    connect(m_reader, SIGNAL(articlesFetchingDone(Feed*)), SLOT(showArticlesFromFeed(Feed*)));
+  }
+}
+
+void MainWindow::showArticlesFromFeed(Feed* feed)
+{
+  //Feed* feed = m_reader->listFeeds().value(item->text(0));
+  QMap<QString, Article*> articlesList = feed->listArticles();
+  QMap<QString, Article*>::iterator articlesIterator = articlesList.begin();
+  
+  ui->articlesTableView->setSortingEnabled(false);
+  ui->articlesTableView->setColumnCount(3);
+  
+  int row = 0;
+  while(articlesIterator != articlesList.end()) {
+    ui->articlesTableView->insertRow(row);
+    QTableWidgetItem* title = new QTableWidgetItem(articlesIterator.value()->getTitle(), QTableWidgetItem::Type);
+    ui->articlesTableView->setItem(row, 0, title);
+    
+    QTableWidgetItem* author = new QTableWidgetItem(articlesIterator.value()->getAuthor(), QTableWidgetItem::Type);
+    ui->articlesTableView->setItem(row, 1, author);
+    
+    QString publishedDate = articlesIterator.value()->getPublished().toString();
+    QTableWidgetItem* published = new QTableWidgetItem(publishedDate, QTableWidgetItem::Type);
+    ui->articlesTableView->setItem(row, 2, published);
+    
+    row++;
+    articlesIterator++;
+  }
+  
+  qDebug() << ui->articlesTableView->rowCount();
+}
+
+
+
 
 
 #include "mainwindow.moc"

@@ -35,7 +35,13 @@ Feed::Feed(Feed& oldFeed)
 
 void Feed::getArticles()
 {
-  m_parrentReader->getArticlesFromFeed(m_name);
+  if(m_parrentReader == NULL) { 
+    // TODO
+    qDebug() << "No reader";
+  } else {
+    m_parrentReader->getArticlesFromFeed(m_name);
+    connect(m_parrentReader, SIGNAL(articlesFetchingDone(Feed*)), SIGNAL(articlesFetchingDone(Feed*)));
+  }
 }
 
 

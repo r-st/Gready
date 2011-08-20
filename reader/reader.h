@@ -104,6 +104,7 @@ signals:
   void authenticationDone();
   void tagsFetchingDone();
   void feedsFetchingDone();
+  void articlesFetchingDone(Feed* feed);
 
 };
 

@@ -80,6 +80,8 @@ public:
      */
     bool hasCategory() { return m_hasCategory; }
     
+    QMap<QString, Article*> listArticles() { return m_articles; }
+    
     bool operator==(Feed &second) { if(m_id == second.m_id) { return true;} else { return false; } }
     
 public slots:
@@ -108,6 +110,9 @@ private:
   bool m_hasCategory;
   
   Reader* m_parrentReader;
+  
+signals:
+  void articlesFetchingDone(Feed* feed);
 };
 
 #endif // FEED_H

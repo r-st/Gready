@@ -143,11 +143,11 @@ void Reader::taglistFinished() {
             }
             xml.readNext();
         }
+      emit tagsFetchingDone();
     }
 
     m_replies.removeAll(reply);
     reply->deleteLater();
-    emit tagsFetchingDone();
 }
 
 
@@ -205,7 +205,7 @@ void Reader::feedsFetched()
                     // feed title
                 } else if (xml.name() == "string" && xml.attributes().value("name") == "title" && !category) {
                     title = xml.readElementText();
-                    newFeed = new Feed(title, id);
+                    newFeed = new Feed(title, id, this);
                     m_feedList.insert(title, newFeed);
                     // category name
                 } else if (xml.name() == "string" && xml.attributes().value("name") == "id" && category) {
@@ -226,11 +226,13 @@ void Reader::feedsFetched()
                 category = false;
             }
         }
+        
+      emit feedsFetchingDone();
+    
     }
     m_replies.removeAll(reply);
     reply->deleteLater();
     
-    emit feedsFetchingDone();
 }
 
 
@@ -357,9 +359,13 @@ void Reader::articlesFromFeedFinished(QString feedName)
                 isRead = isShared = isStarred = false;
             }
         }
+        
+      emit articlesFetchingDone(m_feedList[feedName]);
+      
     }
     m_replies.removeAll(reply);
     reply->deleteLater();
+    
 }
 
 

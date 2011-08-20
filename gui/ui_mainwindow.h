@@ -20,7 +20,7 @@
 #include <QtGui/QMenu>
 #include <QtGui/QMenuBar>
 #include <QtGui/QStatusBar>
-#include <QtGui/QTableView>
+#include <QtGui/QTableWidget>
 #include <QtGui/QTextBrowser>
 #include <QtGui/QTreeView>
 #include <QtGui/QVBoxLayout>
@@ -37,7 +37,7 @@ public:
     QHBoxLayout *horizontalLayout;
     QTreeWidget *feedsView;
     QVBoxLayout *verticalLayout;
-    QTableView *articlesTableView;
+    QTableWidget *articlesTableView;
     QTextBrowser *articleView;
     QMenuBar *menubar;
     QMenu *menuGready;
@@ -65,7 +65,7 @@ public:
 
         verticalLayout = new QVBoxLayout();
         verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
-        articlesTableView = new QTableView(widget);
+        articlesTableView = new QTableWidget(widget);
         articlesTableView->setObjectName(QString::fromUtf8("articlesTableView"));
 
         verticalLayout->addWidget(articlesTableView);
