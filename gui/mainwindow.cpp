@@ -6,6 +6,13 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    
+    QList<QString> headerLabels;
+    headerLabels << tr("Title") << tr("Author") << tr("Date");
+    ui->articlesTableView->setHeaderLabels(headerLabels);
+    
+    ui->feedsView->setHeaderLabel(tr("Name"));
+  
     connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
     
     //loadFeeds();
@@ -20,7 +27,6 @@ MainWindow::~MainWindow()
 void MainWindow::loadFeeds()
 {
   ui->feedsView->clear();
-  ui->feedsView->setHeaderLabel(tr("Name"));
   
   QMap<QString, Tag*> tagList = m_reader->listTags();
   QMap<QString, Tag*>::iterator iter = tagList.begin();
@@ -77,9 +83,6 @@ void MainWindow::loadArticlesFromFeed(QTreeWidgetItem* item)
 void MainWindow::showArticlesFromFeed(Feed* feed)
 {
   ui->articlesTableView->clear();
-  QList<QString> headerLabels;
-  headerLabels << tr("Title") << tr("Author") << tr("Date");
-  ui->articlesTableView->setHeaderLabels(headerLabels);
   
   QMap<QString, Article*> articlesList = feed->listArticles();
   QMap<QString, Article*>::iterator articlesIterator = articlesList.begin();
