@@ -25,12 +25,12 @@
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QTreeView" name="feedsView"/>
+      <widget class="QTreeWidget" name="feedsView"/>
      </item>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="QTableView" name="articlesTableView"/>
+        <widget class="QTreeWidget" name="articlesTableView"/>
        </item>
        <item>
         <widget class="QTextBrowser" name="articleView"/>
