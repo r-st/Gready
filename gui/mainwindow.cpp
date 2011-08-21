@@ -92,13 +92,28 @@ void MainWindow::showArticlesFromFeed(Feed* feed)
     
     QString publishedDate = articlesIterator.value()->getPublished().toString();
     article->setText(2, publishedDate);
+    
+    // hidden columns for further identification
     article->setText(3, articlesIterator.value()->getId());
+    article->setText(4, feed->getName());
     
     articlesIterator++;
   }
   
+  connect(ui->articlesTableView, SIGNAL(itemClicked(QTreeWidgetItem*,int)), SLOT(loadArticleContent(QTreeWidgetItem*)));
 }
 
+void MainWindow::loadArticleContent(QTreeWidgetItem* item)
+{
+  Article* article = m_reader->listFeeds().value(item->text(4))->listArticles().value(item->text(3));
+  
+  if(article == NULL) {
+    // TODO
+    qDebug() << "No such article";
+  } else {
+    ui->articleView->setHtml(article->getContent());
+  }
+}
 
 
 

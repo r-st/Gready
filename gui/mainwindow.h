@@ -28,6 +28,7 @@ private:
 public slots:
     void loadFeeds();
     void loadArticlesFromFeed(QTreeWidgetItem* item);
+    void loadArticleContent(QTreeWidgetItem* item);
 
 private slots:
   void showArticlesFromFeed(Feed* feed);
