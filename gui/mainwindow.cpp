@@ -115,13 +115,20 @@ void MainWindow::showArticlesFromFeed(Feed* feed)
   
   while(articlesIterator != articlesList.end()) {
     QTreeWidgetItem* article = new QTreeWidgetItem(ui->articlesTableView);
+    
+    // set bold font for unread articles
+    if(!articlesIterator.value()->isRead()) { 
+      QFont font;
+      font.setBold(true);
+      
+      article->setFont(0, font);
+      article->setFont(1, font);
+      article->setFont(2, font);
+    }
+    
     article->setText(0, articlesIterator.value()->getTitle());
     article->setText(1, articlesIterator.value()->getAuthor());
    
-    /*
-    QString publishedDate = articlesIterator.value()->getPublished().toString();
-    article->setText(2, publishedDate);
-    */
     article->setData(2, Qt::DisplayRole, QVariant(articlesIterator.value()->getPublished()));
     
     // hidden columns for further identification
