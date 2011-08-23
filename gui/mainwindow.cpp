@@ -117,9 +117,12 @@ void MainWindow::showArticlesFromFeed(Feed* feed)
     QTreeWidgetItem* article = new QTreeWidgetItem(ui->articlesTableView);
     article->setText(0, articlesIterator.value()->getTitle());
     article->setText(1, articlesIterator.value()->getAuthor());
-    
+   
+    /*
     QString publishedDate = articlesIterator.value()->getPublished().toString();
     article->setText(2, publishedDate);
+    */
+    article->setData(2, Qt::DisplayRole, QVariant(articlesIterator.value()->getPublished()));
     
     // hidden columns for further identification
     article->setText(3, articlesIterator.value()->getId());
@@ -128,6 +131,7 @@ void MainWindow::showArticlesFromFeed(Feed* feed)
     articlesIterator++;
   }
   
+  ui->articlesTableView->sortItems(2, Qt::DescendingOrder);
   connect(ui->articlesTableView, SIGNAL(itemClicked(QTreeWidgetItem*,int)), SLOT(loadArticleContent(QTreeWidgetItem*)));
 }
 
