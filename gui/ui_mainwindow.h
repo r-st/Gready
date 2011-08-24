@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Mon Aug 1 15:47:36 2011
+** Created: Wed Aug 24 14:31:12 2011
 **      by: Qt User Interface Compiler version 4.7.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -19,13 +19,12 @@
 #include <QtGui/QMainWindow>
 #include <QtGui/QMenu>
 #include <QtGui/QMenuBar>
+#include <QtGui/QSplitter>
 #include <QtGui/QStatusBar>
-#include <QtGui/QTableWidget>
 #include <QtGui/QTextBrowser>
-#include <QtGui/QTreeView>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QWidget>
 #include <QtGui/QTreeWidget>
+#include <QtGui/QWidget>
+
 QT_BEGIN_NAMESPACE
 
 class Ui_MainWindow
@@ -33,10 +32,10 @@ class Ui_MainWindow
 public:
     QAction *actionQuit;
     QWidget *centralwidget;
-    QWidget *widget;
     QHBoxLayout *horizontalLayout;
+    QSplitter *splitter_2;
     QTreeWidget *feedsView;
-    QVBoxLayout *verticalLayout;
+    QSplitter *splitter;
     QTreeWidget *articlesTableView;
     QTextBrowser *articleView;
     QMenuBar *menubar;
@@ -47,41 +46,39 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(796, 596);
+        MainWindow->resize(794, 594);
         actionQuit = new QAction(MainWindow);
         actionQuit->setObjectName(QString::fromUtf8("actionQuit"));
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
-        widget = new QWidget(centralwidget);
-        widget->setObjectName(QString::fromUtf8("widget"));
-        widget->setGeometry(QRect(7, 2, 781, 551));
-        horizontalLayout = new QHBoxLayout(widget);
+        horizontalLayout = new QHBoxLayout(centralwidget);
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
-        horizontalLayout->setContentsMargins(0, 0, 0, 0);
-        feedsView = new QTreeWidget(widget);
+        splitter_2 = new QSplitter(centralwidget);
+        splitter_2->setObjectName(QString::fromUtf8("splitter_2"));
+        splitter_2->setOrientation(Qt::Horizontal);
+        feedsView = new QTreeWidget(splitter_2);
         feedsView->setObjectName(QString::fromUtf8("feedsView"));
-
-        horizontalLayout->addWidget(feedsView);
-
-        verticalLayout = new QVBoxLayout();
-        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
-        articlesTableView = new QTreeWidget(widget);
+        splitter_2->addWidget(feedsView);
+        splitter = new QSplitter(splitter_2);
+        splitter->setObjectName(QString::fromUtf8("splitter"));
+        splitter->setOrientation(Qt::Vertical);
+        articlesTableView = new QTreeWidget(splitter);
+        QTreeWidgetItem *__qtreewidgetitem = new QTreeWidgetItem();
+        __qtreewidgetitem->setText(0, QString::fromUtf8("1"));
+        articlesTableView->setHeaderItem(__qtreewidgetitem);
         articlesTableView->setObjectName(QString::fromUtf8("articlesTableView"));
-
-        verticalLayout->addWidget(articlesTableView);
-
-        articleView = new QTextBrowser(widget);
+        splitter->addWidget(articlesTableView);
+        articleView = new QTextBrowser(splitter);
         articleView->setObjectName(QString::fromUtf8("articleView"));
+        splitter->addWidget(articleView);
+        splitter_2->addWidget(splitter);
 
-        verticalLayout->addWidget(articleView);
-
-
-        horizontalLayout->addLayout(verticalLayout);
+        horizontalLayout->addWidget(splitter_2);
 
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
-        menubar->setGeometry(QRect(0, 0, 796, 20));
+        menubar->setGeometry(QRect(0, 0, 794, 20));
         menuGready = new QMenu(menubar);
         menuGready->setObjectName(QString::fromUtf8("menuGready"));
         MainWindow->setMenuBar(menubar);
@@ -104,6 +101,8 @@ public:
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0, QApplication::UnicodeUTF8));
         actionQuit->setText(QApplication::translate("MainWindow", "Quit", 0, QApplication::UnicodeUTF8));
         actionQuit->setShortcut(QApplication::translate("MainWindow", "Ctrl+Q", 0, QApplication::UnicodeUTF8));
+        QTreeWidgetItem *___qtreewidgetitem = feedsView->headerItem();
+        ___qtreewidgetitem->setText(0, QApplication::translate("MainWindow", "1", 0, QApplication::UnicodeUTF8));
         menuGready->setTitle(QApplication::translate("MainWindow", "Gready", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
