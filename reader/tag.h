@@ -47,7 +47,7 @@ public:
     StateUnknown 
   };
   Tag() {}
-  Tag(QString name, QString tagLabel, type tagType = Label, Reader* parrent = NULL): m_tagName(name), m_tagLabel(tagLabel), m_tagType(tagType), m_parrent(parrent) {};
+  Tag(QString name, QString tagLabel, type tagType = Label, Reader* parrent = NULL): m_tagName(name), m_tagLabel(tagLabel), m_tagType(tagType), m_parrent(parrent), m_unread(0) {};
   
   /**
    * Returns name of the tag
@@ -105,12 +105,25 @@ public:
   
   bool operator==(Tag &second) { if(m_tagLabel == second.m_tagLabel) { return true; } else { return false; } }
   
+  /**
+   * Sets number of unread articles
+   * @param num number of unread articles
+   */
+  void setUnreadCount(unsigned int num) { m_unread = num; }
+  
+  /**
+   * Returns number of unread articles
+   * @return number of unread articles
+   */
+  unsigned int getUnreadCount() { return m_unread; }
+  
 private: 
   QString m_tagName;
   QString m_tagLabel;
   type m_tagType;
   Reader* m_parrent;
   QMap<QString, Feed*> m_feeds; 
+  unsigned int m_unread;
   
 };
 

@@ -39,8 +39,8 @@ class Feed : public QObject
   Q_OBJECT
   
 public:
-    Feed(QString name, QString id, Reader* parrent = 0):m_name(name), m_id(id), m_parrentReader(parrent) {};
-    Feed(Reader* parrent = 0): m_parrentReader(parrent) {};
+    Feed(QString name, QString id, Reader* parrent = 0):m_name(name), m_id(id), m_parrentReader(parrent), m_unread(0) {};
+    Feed(Reader* parrent = 0): m_parrentReader(parrent), m_unread(0) {};
     Feed(Feed &oldFeed);
     
     /**
@@ -82,7 +82,18 @@ public:
     
     QMap<QString, Article*> listArticles() { return m_articles; }
     
-    bool operator==(Feed &second) { if(m_id == second.m_id) { return true;} else { return false; } }
+    bool operator==(Feed &second) { if(m_id == second.m_id) { return true;} else { return false; } } /**
+    
+   * Sets number of unread articles
+   * @param num number of unread articles
+   */
+  void setUnreadCount(unsigned int num) { m_unread = num; }
+  
+  /**
+   * Returns number of unread articles
+   * @return number of unread articles
+   */
+  unsigned int getUnreadCount() { return m_unread; }
     
 public slots:
   /**
@@ -105,6 +116,7 @@ private:
   // continuation ID string
   QString m_continuation;
   QMap<QString, Article*> m_articles;
+  unsigned int m_unread;
   
   // true when feed has some tag, false when feed is top-level
   bool m_hasCategory;

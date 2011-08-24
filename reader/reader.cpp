@@ -164,6 +164,7 @@ void Reader::taglistFinished() {
 
                     // Save it
                     m_tagList.insert(name, newTag);
+                    m_tagListByID.insert(elementText, newTag);
                 }
             }
             xml.readNext();
@@ -232,6 +233,7 @@ void Reader::feedsFetched()
                     title = xml.readElementText();
                     newFeed = new Feed(title, id, this);
                     m_feedList.insert(title, newFeed);
+                    m_feedListByID.insert(id, newFeed);
                     // category name
                 } else if (xml.name() == "string" && xml.attributes().value("name") == "id" && category) {
                     newFeed->setHasCategory(true);
@@ -302,7 +304,6 @@ void Reader::articlesFromFeedFinished(QString feedName)
         }
     }
 
-    //qDebug() << feedName;
     if (reply->error()) {
         // TODO: Process error
         qDebug() << "Tag: " << reply->errorString();
@@ -392,6 +393,79 @@ void Reader::articlesFromFeedFinished(QString feedName)
     reply->deleteLater();
     
 }
+
+void Reader::getUnreadCount()
+{
+    QString url = m_apiUrl;
+    url.append("unread-count");
+    qint64 timestamp = QDateTime::currentMSecsSinceEpoch()/1000;
+
+    QUrl request(url);
+    request.addQueryItem(QString("output"),QString("xml"));
+    request.addQueryItem(QString("ck"), QString::number(timestamp));
+    request.addQueryItem(QString("client"), m_settings.applicationName());
+
+
+    QNetworkReply* reply = m_manager.get(setAuthHeader(QNetworkRequest(request)));
+    connect(reply, SIGNAL(finished()), SLOT(unreadFinished()));
+
+    m_replies.append(reply);
+}
+
+void Reader::unreadFinished()
+{
+
+    QNetworkReply* reply;
+
+    for (uint i = 0; i < m_replies.count(); i++) {
+        if (m_replies[i]->isFinished()) {
+            reply =m_replies[i];
+            break;
+        }
+    }
+
+    if (reply->error()) {
+        // TODO: Process error
+        qDebug() << "Unread: " << reply->errorString();
+    } else {
+      QXmlStreamReader xml;
+      xml.addData(reply->readAll());
+      
+      
+      while(!xml.atEnd()) {
+        xml.readNext();
+        if(xml.isStartElement() && xml.name() == "object") {
+          QString id;
+          unsigned unread;
+          while(!xml.isEndElement() || xml.name() != "object") {
+            if(xml.isStartElement()) {
+              if(xml.name() == "string") {
+                id = xml.readElementText();
+              } else if (xml.name() == "number" && xml.attributes().value("name") == "count") {
+                unread = xml.readElementText().toUInt();
+              }
+            }
+            xml.readNext();
+          }
+          if(id.startsWith("feed")) {
+            if(m_feedListByID.contains(id)) {
+              m_feedListByID[id]->setUnreadCount(unread);
+            }
+          } else if(id.startsWith("user")) {
+            if(m_tagListByID.contains(id)) {
+              m_tagListByID[id]->setUnreadCount(unread);
+            }
+          }
+        }
+      }
+      emit unreadCountDone();
+    }
+    
+    m_replies.removeAll(reply);
+    reply->deleteLater();
+}
+
+
 
 
 #include "reader.moc"

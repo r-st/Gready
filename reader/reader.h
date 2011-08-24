@@ -53,8 +53,17 @@ private:
     QNetworkAccessManager m_manager;
     QSettings m_settings;
     QList<QNetworkReply*> m_replies;
+    
+    // list of tags mapped by tag title
     QMap<QString, Tag*> m_tagList;
+    // list of tags mapped by it's id
+    QMap<QString, Tag*> m_tagListByID;
+    
+    // list of feeds mapped by feed title
     QMap<QString, Feed*> m_feedList;
+    // list of feeds mapped by id's id
+    QMap<QString, Feed*> m_feedListByID;
+    
     QSignalMapper* m_signalMapper;
 
 
@@ -92,6 +101,8 @@ private slots:
      */
     void articlesFromFeedFinished(QString feedName);
     
+    void unreadFinished();
+    
 public slots:
     /**
      * Get list of tags
@@ -125,11 +136,14 @@ public slots:
      */
     QMap<QString, Feed*> listFeeds() { return m_feedList; }
     
+    void getUnreadCount();
+    
 signals:
   void authenticationDone();
   void tagsFetchingDone();
   void feedsFetchingDone();
   void articlesFetchingDone(Feed* feed);
+  void unreadCountDone();
 
 };
 

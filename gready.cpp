@@ -37,7 +37,8 @@ gready::gready()
     connect(reader, SIGNAL(authenticationDone()), reader, SLOT(getTags()));
     MainWindow* main = new MainWindow;
     connect(reader, SIGNAL(tagsFetchingDone()), reader, SLOT(getAllFeeds()));
-    connect(reader,SIGNAL(feedsFetchingDone()), main, SLOT(loadFeeds()));
+    connect(reader,SIGNAL(feedsFetchingDone()), reader, SLOT(getUnreadCount()));
+    connect(reader, SIGNAL(unreadCountDone()), main, SLOT(loadFeeds()));
     
     main->setReader(reader);
     main->show();

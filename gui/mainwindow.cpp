@@ -32,11 +32,13 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     
-    QList<QString> headerLabels;
-    headerLabels << tr("Title") << tr("Author") << tr("Date");
-    ui->articlesTableView->setHeaderLabels(headerLabels);
+    QList<QString> articleHeaderLabels;
+    articleHeaderLabels << tr("Title") << tr("Author") << tr("Date");
+    ui->articlesTableView->setHeaderLabels(articleHeaderLabels);
     
-    ui->feedsView->setHeaderLabel(tr("Name"));
+    QList<QString> feedHeaderLabels;
+    feedHeaderLabels << tr("Name") << tr("Unread");
+    ui->feedsView->setHeaderLabels(feedHeaderLabels);
   
     connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
     
@@ -61,6 +63,14 @@ void MainWindow::loadFeeds()
       QTreeWidgetItem* tag = new QTreeWidgetItem(ui->feedsView);
       tag->setText(0, iter.value()->getName());
       
+      // set font to bold when there are unread articles
+      if(iter.value()->getUnreadCount() > 0) {
+        QFont font;
+        font.setBold(true);
+        tag->setFont(1, font);
+      }
+      tag->setText(1, QString::number(iter.value()->getUnreadCount()));
+      
       // load feeds
       QMap<QString, Feed*> feedList = iter.value()->getFeeds();
       QMap<QString, Feed*>::iterator feedIter = feedList.begin();
@@ -68,6 +78,14 @@ void MainWindow::loadFeeds()
       while(feedIter != feedList.end()) {
         QTreeWidgetItem* feed = new QTreeWidgetItem(tag);
         feed->setText(0, feedIter.value()->getName());
+        
+        if(feedIter.value()->getUnreadCount() > 0) {
+          QFont font;
+          font.setBold(true);
+          feed->setFont(1, font);
+        }
+        feed->setText(1, QString::number(feedIter.value()->getUnreadCount()));
+          
         feedIter++;
       }
       //tag->addChildren(feeds);
@@ -82,6 +100,12 @@ void MainWindow::loadFeeds()
     if(!feedIterator.value()->hasCategory()) {
         QTreeWidgetItem* feed = new QTreeWidgetItem(ui->feedsView);
         feed->setText(0, feedIterator.value()->getName());
+        if(feedIterator.value()->getUnreadCount() > 0) {
+          QFont font;
+          font.setBold(true);
+          feed->setFont(1, font);
+        }
+        feed->setText(1, QString::number(feedIterator.value()->getUnreadCount()));
         
     }
     feedIterator++;
