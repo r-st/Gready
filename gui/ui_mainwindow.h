@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Wed Aug 24 14:31:12 2011
+** Created: Thu Aug 25 17:52:40 2011
 **      by: Qt User Interface Compiler version 4.7.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -31,6 +31,7 @@ class Ui_MainWindow
 {
 public:
     QAction *actionQuit;
+    QAction *actionSettings;
     QWidget *centralwidget;
     QHBoxLayout *horizontalLayout;
     QSplitter *splitter_2;
@@ -46,9 +47,11 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(794, 594);
+        MainWindow->resize(792, 592);
         actionQuit = new QAction(MainWindow);
         actionQuit->setObjectName(QString::fromUtf8("actionQuit"));
+        actionSettings = new QAction(MainWindow);
+        actionSettings->setObjectName(QString::fromUtf8("actionSettings"));
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         horizontalLayout = new QHBoxLayout(centralwidget);
@@ -78,7 +81,7 @@ public:
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
-        menubar->setGeometry(QRect(0, 0, 794, 20));
+        menubar->setGeometry(QRect(0, 0, 792, 20));
         menuGready = new QMenu(menubar);
         menuGready->setObjectName(QString::fromUtf8("menuGready"));
         MainWindow->setMenuBar(menubar);
@@ -89,6 +92,7 @@ public:
         QWidget::setTabOrder(articlesTableView, articleView);
 
         menubar->addAction(menuGready->menuAction());
+        menuGready->addAction(actionSettings);
         menuGready->addAction(actionQuit);
 
         retranslateUi(MainWindow);
@@ -101,6 +105,8 @@ public:
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0, QApplication::UnicodeUTF8));
         actionQuit->setText(QApplication::translate("MainWindow", "Quit", 0, QApplication::UnicodeUTF8));
         actionQuit->setShortcut(QApplication::translate("MainWindow", "Ctrl+Q", 0, QApplication::UnicodeUTF8));
+        actionSettings->setText(QApplication::translate("MainWindow", "Settings", 0, QApplication::UnicodeUTF8));
+        actionSettings->setShortcut(QApplication::translate("MainWindow", "Ctrl+S", 0, QApplication::UnicodeUTF8));
         QTreeWidgetItem *___qtreewidgetitem = feedsView->headerItem();
         ___qtreewidgetitem->setText(0, QApplication::translate("MainWindow", "1", 0, QApplication::UnicodeUTF8));
         menuGready->setTitle(QApplication::translate("MainWindow", "Gready", 0, QApplication::UnicodeUTF8));

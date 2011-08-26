@@ -23,42 +23,29 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
 
-#include <QMainWindow>
-#include <QTreeWidgetItem>
-#include "../reader/reader.h"
-#include "../reader/tag.h"
-#include "settingswindow.h"
+#ifndef SETTINGSWINDOW_H
+#define SETTINGSWINDOW_H
 
-namespace Ui {
-    class MainWindow;
-}
+#include <QDialog>
+#include <QFormLayout>
+#include <QSettings>
+#include <QDialogButtonBox>
+#include <QLineEdit>
+#include <QVBoxLayout>
 
-class MainWindow : public QMainWindow
+
+class SettingsWindow : public QDialog
 {
-    Q_OBJECT
-
+  Q_OBJECT
 public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    SettingsWindow();
     
-    void setReader(Reader* reader) { m_reader = reader; }
-
 private:
-    Ui::MainWindow *ui;
-    Reader* m_reader;
-    
-    
+  QLineEdit* m_usernameLineEdit;
+  QLineEdit* m_passwordLineEdit;
 public slots:
-    void loadFeeds();
-    void loadArticlesFromFeed(QTreeWidgetItem* item);
-    void loadArticleContent(QTreeWidgetItem* item);
-    void showSettingsWindow();
-
-private slots:
-  void showArticlesFromFeed(Feed* feed);
+    void saveSettings();
 };
 
-#endif // MAINWINDOW_H
+#endif // SETTINGSWINDOW_H

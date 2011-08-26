@@ -42,6 +42,8 @@ MainWindow::MainWindow(QWidget *parent) :
   
     connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
     
+    connect(ui->actionSettings, SIGNAL(triggered(bool)), SLOT(showSettingsWindow()));
+    
     //loadFeeds();
     
 }
@@ -176,6 +178,12 @@ void MainWindow::loadArticleContent(QTreeWidgetItem* item)
   } else {
     ui->articleView->setHtml(article->getContent());
   }
+}
+
+void MainWindow::showSettingsWindow()
+{
+  SettingsWindow settingsWindow;
+  settingsWindow.exec();
 }
 
 
