@@ -34,10 +34,11 @@ Reader::Reader():m_apiUrl("http://www.google.com/reader/api/0/"), m_atomUrl("htt
 
 
 void Reader::getID() {
+  if(!m_settings.value("username").toString().isEmpty() && !m_settings.value("password").toString().isEmpty()) {
     QUrl params;
     QByteArray data;
 
-// Prepare authentication data
+    // Prepare authentication data
     params.addQueryItem("service", "reader");
     params.addEncodedQueryItem("Email", m_settings.value("username").toByteArray());
     params.addEncodedQueryItem("Passwd", m_settings.value("password").toByteArray());
@@ -51,6 +52,7 @@ void Reader::getID() {
     QNetworkReply* reply =  m_manager.post(req, data);
     connect(reply, SIGNAL(finished()), SLOT(authenticated()));
     m_replies.append(reply);
+  }
 }
 
 void Reader::authenticated() {
