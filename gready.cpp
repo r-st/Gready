@@ -33,7 +33,6 @@
 gready::gready()
 {
     Reader* reader = new Reader;
-    reader->getTags();
     connect(reader, SIGNAL(authenticationDone()), reader, SLOT(getTags()));
     MainWindow* main = new MainWindow;
     connect(reader, SIGNAL(tagsFetchingDone()), reader, SLOT(getAllFeeds()));
