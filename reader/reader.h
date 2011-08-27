@@ -101,6 +101,9 @@ private slots:
      */
     void articlesFromFeedFinished(QString feedName);
     
+    /**
+     * Process number of unread articles
+     */
     void unreadFinished();
     
 public slots:
@@ -120,10 +123,6 @@ public slots:
      */
     void getArticlesFromFeed(QString feedName);
     
-    void quit() {
-        QCoreApplication::instance()->quit();
-    }
-    
     /**
      * Returns list of tags
      * @return list of tags
@@ -136,6 +135,9 @@ public slots:
      */
     QMap<QString, Feed*> listFeeds() { return m_feedList; }
     
+    /**
+     * Fetches number of unread articles
+     */
     void getUnreadCount();
     
 signals:
