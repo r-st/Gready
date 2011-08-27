@@ -84,6 +84,7 @@ void Reader::authenticated() {
 
     reply->deleteLater();
     emit authenticationDone();
+    getToken();
 }
 
 QNetworkRequest Reader::setAuthHeader(QNetworkRequest req) {
@@ -177,7 +178,6 @@ void Reader::taglistFinished() {
     m_replies.removeAll(reply);
     reply->deleteLater();
 }
-
 
 void Reader::getAllFeeds()
 {
@@ -465,6 +465,41 @@ void Reader::unreadFinished()
     
     m_replies.removeAll(reply);
     reply->deleteLater();
+}
+
+void Reader::getToken()
+{
+  QString url = m_apiUrl;
+  url.append("token");
+  
+  QUrl request(url);
+  QNetworkReply* reply = m_manager.get(setAuthHeader(QNetworkRequest(request)));
+  
+  connect(reply, SIGNAL(finished()), SLOT(tokenFinished()));
+  m_replies.append(reply);
+}
+
+void Reader::tokenFinished()
+{ 
+  QNetworkReply* reply;
+
+  for (uint i = 0; i < m_replies.count(); i++) {
+    if (m_replies[i]->isFinished()) {
+        reply =m_replies[i];
+        break;
+    }
+  }
+  
+  if(reply->error()) {
+    // TODO
+    qDebug() << "Token: " << reply->errorString();
+  } else {
+    m_token = reply->readAll();
+    qDebug() << m_token;
+    
+    emit tokenDone();
+  }
+
 }
 
 

@@ -48,6 +48,7 @@ class Reader : public QObject {
 
 private:
     QString m_authKey;
+    QString m_token;
     const QString m_apiUrl;
     const QString m_atomUrl;
     QNetworkAccessManager m_manager;
@@ -106,6 +107,11 @@ private slots:
      */
     void unreadFinished();
     
+    /**
+     * Process edit API token
+     */
+    void tokenFinished();
+    
 public slots:
     /**
      * Get list of tags
@@ -140,12 +146,18 @@ public slots:
      */
     void getUnreadCount();
     
+    /**
+     * Fetches token for edit API
+     */
+    void getToken();
+    
 signals:
   void authenticationDone();
   void tagsFetchingDone();
   void feedsFetchingDone();
   void articlesFetchingDone(Feed* feed);
   void unreadCountDone();
+  void tokenDone();
 
 };
 
