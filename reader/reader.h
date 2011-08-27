@@ -80,7 +80,15 @@ private:
 
 public:
     Reader();
-
+    enum editAction { Add, Remove};
+    enum tagIdentifier {
+      Label,
+      Read,
+      KeepUnread,
+      Star,
+      Share,
+      Like };
+ 
 private slots:
     /**
      * Process SID retrieved from getID
@@ -151,6 +159,17 @@ public slots:
      */
     void getToken();
     
+    /**
+     * Add or remove tag from item
+     * @param articleId id of the article
+     * @param feedName name of the feed with given article
+     * @param action add or remove given tag
+     * @param tag desired tag (Label for custom tag, rest for preset ones)
+     * @param tagName name of the tag (only for custom tags)
+     */
+    void editTag(QString articleId, QString feedName, editAction action, tagIdentifier tag, QString tagName = "" );
+    
+   
 signals:
   void authenticationDone();
   void tagsFetchingDone();

@@ -495,12 +495,49 @@ void Reader::tokenFinished()
     qDebug() << "Token: " << reply->errorString();
   } else {
     m_token = reply->readAll();
-    qDebug() << m_token;
     
     emit tokenDone();
   }
 
 }
+
+void Reader::editTag(QString articleId, QString feedName, Reader::editAction action, Reader::tagIdentifier tag, QString tagName)
+{
+  QString url = m_apiUrl;
+  url.append("edit-tag");
+  
+  QUrl request(url);
+  request.addEncodedQueryItem("client", QByteArray(m_settings.applicationName().toAscii()));
+  
+  QUrl params;
+  // add article id
+  params.addQueryItem("i", "tag:google.com,2005:reader/item/" + articleId);
+  
+  // add feed
+  params.addQueryItem("s", m_feedList[feedName]->getID());
+  
+  // add token
+  params.addQueryItem("T", m_token);
+  
+  // add or remove tag
+  QString addOrRemove = action == Add ? "a" : "r";
+  
+  QString label;
+  
+  switch(tag) {
+    case Read:
+      label = "user/-/com.google/read";
+      break;
+      // TODO: rest of tags
+  }
+  
+  params.addQueryItem(addOrRemove, label);
+  QByteArray paramsData;
+  paramsData = params.encodedQuery();
+  
+  m_manager.post(QNetworkRequest(request), paramsData);
+}
+
 
 
 
