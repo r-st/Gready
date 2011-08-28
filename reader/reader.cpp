@@ -457,7 +457,26 @@ void Reader::editTag(QString articleId, QString feedName, Reader::editAction act
     case Read:
       label = "user/-/state/com.google/read";
       break;
-      // TODO: rest of tags
+    case Star:
+      label = "user/-/state/com.google/starred";
+      break;
+    case KeepUnread:
+      label = "user/-/state/com.google/tracking-kept-unread";
+      break;
+    case Like:
+      label = "user/-/state/com.google/like";
+      break;
+    case Share:
+      label = "user/-/state/com.google/broadcast";
+      break;
+    case Label:
+      if(!tagName.isEmpty()) {
+        label = "user/-/label/" + tagName;
+      } else {
+        // TODO: error handling
+        qDebug() << "Edit label: Empty label name";
+      }
+      break;
   }
   
   params.addQueryItem(addOrRemove, label);
