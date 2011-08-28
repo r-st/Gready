@@ -448,15 +448,6 @@ void Reader::editTag(QString articleId, QString feedName, Reader::editAction act
   request.addEncodedQueryItem("client", QByteArray(m_settings.applicationName().toAscii()));
   
   QUrl params;
-  // add article id
-  params.addQueryItem("i", "tag:google.com,2005:reader/item/" + articleId);
-  
-  // add feed
-  params.addQueryItem("s", m_feedList[feedName]->getID());
-  
-  // add token
-  params.addQueryItem("T", m_token);
-  
   // add or remove tag
   QString addOrRemove = action == Add ? "a" : "r";
   
@@ -464,18 +455,41 @@ void Reader::editTag(QString articleId, QString feedName, Reader::editAction act
   
   switch(tag) {
     case Read:
-      label = "user/-/com.google/read";
+      label = "user/-/state/com.google/read";
       break;
       // TODO: rest of tags
   }
   
   params.addQueryItem(addOrRemove, label);
+  
+  // add feed
+  params.addQueryItem("s", m_feedList[feedName]->getID());
+  
+  // add article id
+  params.addQueryItem("i", "tag:google.com,2005:" + articleId);
+  
+  params.addQueryItem("async", "true");
+  
+  // add token
+  params.addQueryItem("T", m_token);
+  
   QByteArray paramsData;
   paramsData = params.encodedQuery();
+  qDebug() << params.toString();
   
-  m_manager.post(QNetworkRequest(request), paramsData);
+  QNetworkReply* reply = m_manager.post(setAuthHeader(QNetworkRequest(request)), paramsData);
+  
+  connect(reply, SIGNAL(finished()), SLOT(tagEdited()));
 }
 
+void Reader::tagEdited()
+{
+  QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
+  
+  if(reply->error()) {
+    qDebug() << "Tag edited: " << reply->errorString();
+  }
+}
 
 
 

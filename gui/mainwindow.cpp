@@ -161,7 +161,6 @@ void MainWindow::showArticlesFromFeed(Feed* feed)
     article->setText(3, articlesIterator.value()->getId());
     article->setText(4, feed->getName());
     
-    articlesIterator.value()->deleteLater();
     articlesIterator++;
   }
   ui->articlesTableView->sortItems(2, Qt::DescendingOrder);
@@ -171,6 +170,19 @@ void MainWindow::showArticlesFromFeed(Feed* feed)
 void MainWindow::loadArticleContent(QTreeWidgetItem* item)
 {
   Article* article = m_reader->listFeeds().value(item->text(4))->listArticles().value(item->text(3));
+  
+  // set article as read
+  if(!article->isRead()) {
+    m_reader->editTag(article->getId(), item->text(4), Reader::Add, Reader::Read);
+    
+    QFont font;
+    font.setBold(false);
+      
+    item->setFont(0, font);
+    item->setFont(1, font);
+    item->setFont(2, font);
+    
+  }
   
   if(article == NULL) {
     // TODO

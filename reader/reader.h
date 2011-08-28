@@ -119,6 +119,13 @@ private slots:
      */
     void tokenFinished();
     
+    /**
+     * Process tag-edit reply
+     * 
+     * Now only for error handling
+     */
+    void tagEdited();
+    
 public slots:
     /**
      * Get list of tags
