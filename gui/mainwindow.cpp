@@ -161,9 +161,9 @@ void MainWindow::showArticlesFromFeed(Feed* feed)
     article->setText(3, articlesIterator.value()->getId());
     article->setText(4, feed->getName());
     
+    articlesIterator.value()->deleteLater();
     articlesIterator++;
   }
-  
   ui->articlesTableView->sortItems(2, Qt::DescendingOrder);
   connect(ui->articlesTableView, SIGNAL(itemClicked(QTreeWidgetItem*,int)), SLOT(loadArticleContent(QTreeWidgetItem*)));
 }
