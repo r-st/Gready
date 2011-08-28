@@ -51,19 +51,11 @@ void Reader::getID() {
 
     QNetworkReply* reply =  m_manager.post(req, data);
     connect(reply, SIGNAL(finished()), SLOT(authenticated()));
-    m_replies.append(reply);
   }
 }
 
 void Reader::authenticated() {
-    QNetworkReply* reply;
-
-    for (uint i = 0; i < m_replies.count(); i++) {
-        if (m_replies[i]->isFinished()) {
-            reply =m_replies[i];
-            break;
-        }
-    }
+    QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
 
     if (reply->error()) {
         // TODO: Process error
@@ -79,8 +71,6 @@ void Reader::authenticated() {
         autVal.chop(1);
         m_authKey = autVal;
     }
-
-    m_replies.removeAll(reply);
 
     reply->deleteLater();
     emit authenticationDone();
@@ -106,19 +96,10 @@ void Reader::getTags() {
 
     QNetworkReply* reply = m_manager.get(setAuthHeader(QNetworkRequest(request)));
     connect(reply, SIGNAL(finished()), SLOT(taglistFinished()));
-
-    m_replies.append(reply);
 }
 
 void Reader::taglistFinished() {
-    QNetworkReply* reply;
-
-    for (uint i = 0; i < m_replies.count(); i++) {
-        if (m_replies[i]->isFinished()) {
-            reply =m_replies[i];
-            break;
-        }
-    }
+    QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
 
     if (reply->error()) {
         // TODO: Process error
@@ -175,7 +156,6 @@ void Reader::taglistFinished() {
       emit tagsFetchingDone();
     }
 
-    m_replies.removeAll(reply);
     reply->deleteLater();
 }
 
@@ -193,20 +173,11 @@ void Reader::getAllFeeds()
 
     QNetworkReply* reply = m_manager.get(setAuthHeader(QNetworkRequest(request)));
     connect(reply, SIGNAL(finished()), SLOT(feedsFetched()));
-
-    m_replies.append(reply);
 }
 
 void Reader::feedsFetched()
 {
-    QNetworkReply* reply;
-
-    for (uint i = 0; i < m_replies.count(); i++) {
-        if (m_replies[i]->isFinished()) {
-            reply =m_replies[i];
-            break;
-        }
-    }
+    QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
 
     if (reply->error()) {
         // TODO: Process error
@@ -259,9 +230,7 @@ void Reader::feedsFetched()
       emit feedsFetchingDone();
     
     }
-    m_replies.removeAll(reply);
     reply->deleteLater();
-    
 }
 
 
@@ -290,22 +259,12 @@ void Reader::getArticlesFromFeed(QString feedName)
 
         m_signalMapper->setMapping(reply, feedName);
         connect(m_signalMapper, SIGNAL(mapped(QString)), this, SLOT(articlesFromFeedFinished(QString)));
-
-        m_replies.append(reply);
     }
 }
 void Reader::articlesFromFeedFinished(QString feedName)
 {
 
-    QNetworkReply* reply;
-
-    for (uint i = 0; i < m_replies.count(); i++) {
-        if (m_replies[i]->isFinished()) {
-            reply =m_replies[i];
-            break;
-        }
-    }
-
+    QNetworkReply* reply = qobject_cast<QNetworkReply*>(m_signalMapper->mapping(feedName));
     if (reply->error()) {
         // TODO: Process error
         qDebug() << "Tag: " << reply->errorString();
@@ -391,9 +350,7 @@ void Reader::articlesFromFeedFinished(QString feedName)
       emit articlesFetchingDone(m_feedList[feedName]);
       
     }
-    m_replies.removeAll(reply);
     reply->deleteLater();
-    
 }
 
 void Reader::getUnreadCount()
@@ -410,21 +367,12 @@ void Reader::getUnreadCount()
 
     QNetworkReply* reply = m_manager.get(setAuthHeader(QNetworkRequest(request)));
     connect(reply, SIGNAL(finished()), SLOT(unreadFinished()));
-
-    m_replies.append(reply);
 }
 
 void Reader::unreadFinished()
 {
 
-    QNetworkReply* reply;
-
-    for (uint i = 0; i < m_replies.count(); i++) {
-        if (m_replies[i]->isFinished()) {
-            reply =m_replies[i];
-            break;
-        }
-    }
+    QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
 
     if (reply->error()) {
         // TODO: Process error
@@ -463,7 +411,6 @@ void Reader::unreadFinished()
       emit unreadCountDone();
     }
     
-    m_replies.removeAll(reply);
     reply->deleteLater();
 }
 
@@ -476,20 +423,12 @@ void Reader::getToken()
   QNetworkReply* reply = m_manager.get(setAuthHeader(QNetworkRequest(request)));
   
   connect(reply, SIGNAL(finished()), SLOT(tokenFinished()));
-  m_replies.append(reply);
 }
 
 void Reader::tokenFinished()
 { 
-  QNetworkReply* reply;
+  QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
 
-  for (uint i = 0; i < m_replies.count(); i++) {
-    if (m_replies[i]->isFinished()) {
-        reply =m_replies[i];
-        break;
-    }
-  }
-  
   if(reply->error()) {
     // TODO
     qDebug() << "Token: " << reply->errorString();
@@ -498,7 +437,6 @@ void Reader::tokenFinished()
     
     emit tokenDone();
   }
-
 }
 
 void Reader::editTag(QString articleId, QString feedName, Reader::editAction action, Reader::tagIdentifier tag, QString tagName)

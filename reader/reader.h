@@ -53,7 +53,6 @@ private:
     const QString m_atomUrl;
     QNetworkAccessManager m_manager;
     QSettings m_settings;
-    QList<QNetworkReply*> m_replies;
     
     // list of tags mapped by tag title
     QMap<QString, Tag*> m_tagList;
