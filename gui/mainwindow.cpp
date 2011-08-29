@@ -26,9 +26,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow(Reader* reader, QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    m_reader(reader)
 {
     ui->setupUi(this);
     
@@ -40,9 +41,20 @@ MainWindow::MainWindow(QWidget *parent) :
     feedHeaderLabels << tr("Name") << tr("Unread");
     ui->feedsView->setHeaderLabels(feedHeaderLabels);
   
+    // close window
     connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
     
+    // open settings window
     connect(ui->actionSettings, SIGNAL(triggered(bool)), SLOT(showSettingsWindow()));
+    
+    // fetch list of articles on click
+    connect(ui->feedsView, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(loadArticlesFromFeed(QTreeWidgetItem*)));
+    
+    // show list articles afer fetching them
+    connect(m_reader, SIGNAL(articlesFetchingDone(Feed*)), SLOT(showArticlesFromFeed(Feed*)));
+    
+    // show content of the article on click
+    connect(ui->articlesTableView, SIGNAL(itemClicked(QTreeWidgetItem*,int)), SLOT(loadArticleContent(QTreeWidgetItem*)));
     
     //loadFeeds();
     
@@ -116,7 +128,6 @@ void MainWindow::loadFeeds()
   
   //ui->feedsView->insertTopLevelItems(0, tags);
   ui->feedsView->expandAll();
-  connect(ui->feedsView, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(loadArticlesFromFeed(QTreeWidgetItem*)));
 }
 
 void MainWindow::loadArticlesFromFeed(QTreeWidgetItem* item)
@@ -127,7 +138,6 @@ void MainWindow::loadArticlesFromFeed(QTreeWidgetItem* item)
     qDebug() << "No such feed";
   } else {
     feed->getArticles();
-    connect(m_reader, SIGNAL(articlesFetchingDone(Feed*)), SLOT(showArticlesFromFeed(Feed*)));
   }
 }
 
@@ -163,31 +173,48 @@ void MainWindow::showArticlesFromFeed(Feed* feed)
     
     articlesIterator++;
   }
+  
   ui->articlesTableView->sortItems(2, Qt::DescendingOrder);
-  connect(ui->articlesTableView, SIGNAL(itemClicked(QTreeWidgetItem*,int)), SLOT(loadArticleContent(QTreeWidgetItem*)));
 }
 
 void MainWindow::loadArticleContent(QTreeWidgetItem* item)
 {
   Article* article = m_reader->listFeeds().value(item->text(4))->listArticles().value(item->text(3));
   
-  // set article as read
-  if(!article->isRead()) {
-    m_reader->editTag(article->getId(), item->text(4), Reader::Add, Reader::Read);
-    
-    QFont font;
-    font.setBold(false);
-      
-    item->setFont(0, font);
-    item->setFont(1, font);
-    item->setFont(2, font);
-    
-  }
-  
   if(article == NULL) {
     // TODO
     qDebug() << "No such article";
   } else {
+    // set article as read
+    if(!article->isRead()) {
+      m_reader->editTag(article->getId(), item->text(4), Reader::Add, Reader::Read);
+    
+      QFont font;
+      font.setBold(false);
+      
+      // unset bold for article
+      item->setFont(0, font);
+      item->setFont(1, font);
+      item->setFont(2, font);
+      
+      // decrease number of unread articles from feed
+      Feed* feed = m_reader->listFeeds().value(ui->feedsView->currentItem()->text(0));
+      feed->setUnreadCount(feed->getUnreadCount() - 1);
+      if(feed->getUnreadCount() == 0) {
+        ui->feedsView->currentItem()->setFont(1, font);
+      }
+      ui->feedsView->currentItem()->setText(1, QString::number(feed->getUnreadCount()));
+      
+      if(ui->feedsView->currentItem()->parent()) {
+        Tag* tag = m_reader->listTags().value(ui->feedsView->currentItem()->parent()->text(0));
+        tag->setUnreadCount(tag->getUnreadCount() - 1);
+        
+        if(tag->getUnreadCount() == 0) {
+          ui->feedsView->currentItem()->parent()->setFont(1, font);
+        }
+        ui->feedsView->currentItem()->parent()->setText(1, QString::number(tag->getUnreadCount()));
+      }
+    }
     ui->articleView->setHtml(article->getContent());
   }
 }

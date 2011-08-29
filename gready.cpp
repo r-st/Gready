@@ -34,12 +34,12 @@ gready::gready()
 {
     Reader* reader = new Reader;
     connect(reader, SIGNAL(authenticationDone()), reader, SLOT(getTags()));
-    MainWindow* main = new MainWindow;
+    MainWindow* main = new MainWindow(reader);
     connect(reader, SIGNAL(tagsFetchingDone()), reader, SLOT(getAllFeeds()));
     connect(reader,SIGNAL(feedsFetchingDone()), reader, SLOT(getUnreadCount()));
     connect(reader, SIGNAL(unreadCountDone()), main, SLOT(loadFeeds()));
     
-    main->setReader(reader);
+    //main->setReader(reader);
     main->show();
 }
 
