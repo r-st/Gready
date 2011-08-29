@@ -494,7 +494,6 @@ void Reader::editTag(QString articleId, QString feedName, Reader::editAction act
   
   QByteArray paramsData;
   paramsData = params.encodedQuery();
-  qDebug() << params.toString();
   
   QNetworkReply* reply = m_manager.post(setAuthHeader(QNetworkRequest(request)), paramsData);
   
