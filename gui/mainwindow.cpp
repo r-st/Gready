@@ -56,6 +56,7 @@ MainWindow::MainWindow(Reader* reader, QWidget *parent) :
     // show content of the article on click
     connect(ui->articlesTableView, SIGNAL(itemClicked(QTreeWidgetItem*,int)), SLOT(loadArticleContent(QTreeWidgetItem*)));
     
+    ui->articleView->setOpenExternalLinks(true);;
     //loadFeeds();
     
 }
@@ -246,6 +247,7 @@ QString MainWindow::prepareArticleHeader(Article* article)
   header += "<h1>" + article->getTitle() + "</h1>";
   header += "<h2>" + article->getAuthor() + "</h2>";
   header += "<p>" + article->getPublished().toString(Qt::SystemLocaleLongDate) + "</p>";
+  header += "<p><a href=\"" + article->getUrl().toString() + "\">" + article->getUrl().toString() + "</a></p>";
   header += "<hr>";
   
   return header;
