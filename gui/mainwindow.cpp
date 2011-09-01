@@ -225,6 +225,22 @@ void MainWindow::showSettingsWindow()
   settingsWindow.exec();
 }
 
+void MainWindow::keyPressEvent(QKeyEvent* event)
+{
+  if(event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
+    if(ui->articlesTableView->currentItem()) {
+      Article* article;
+      if((article = m_reader->listFeeds().value(ui->articlesTableView->currentItem()->text(4))->listArticles().value(ui->articlesTableView->currentItem()->text(3))) != NULL) {
+        QDesktopServices desktop;
+        desktop.openUrl(article->getUrl());
+      }
+    }
+  } else {
+    QMainWindow::keyPressEvent(event);
+  }
+}
+
+
 
 
 

@@ -28,6 +28,8 @@
 
 #include <QMainWindow>
 #include <QTreeWidgetItem>
+#include <QDesktopServices>
+#include <QKeyEvent>
 #include "../reader/reader.h"
 #include "../reader/tag.h"
 #include "settingswindow.h"
@@ -49,6 +51,7 @@ public:
 private:
     Ui::MainWindow *ui;
     Reader* m_reader;
+    void keyPressEvent(QKeyEvent* event);
     
     
 public slots:
