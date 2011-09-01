@@ -215,7 +215,7 @@ void MainWindow::loadArticleContent(QTreeWidgetItem* item)
         ui->feedsView->currentItem()->parent()->setText(1, QString::number(tag->getUnreadCount()));
       }
     }
-    ui->articleView->setHtml(article->getContent());
+    ui->articleView->setHtml(prepareArticleHeader(article) + article->getContent());
   }
 }
 
@@ -239,6 +239,19 @@ void MainWindow::keyPressEvent(QKeyEvent* event)
     QMainWindow::keyPressEvent(event);
   }
 }
+
+QString MainWindow::prepareArticleHeader(Article* article)
+{
+  QString header;
+  header += "<h1>" + article->getTitle() + "</h1>";
+  header += "<h2>" + article->getAuthor() + "</h2>";
+  header += "<p>" + article->getPublished().toString(Qt::SystemLocaleLongDate) + "</p>";
+  header += "<hr>";
+  
+  return header;
+
+}
+
 
 
 

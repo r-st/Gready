@@ -52,6 +52,7 @@ private:
     Ui::MainWindow *ui;
     Reader* m_reader;
     void keyPressEvent(QKeyEvent* event);
+    QString prepareArticleHeader(Article* article);
     
     
 public slots:
