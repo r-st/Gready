@@ -14,4 +14,5 @@ versions after 0.1:
 - Save list of tags, feeds and articles for better performance (?)
 - Code clean up
 - Better error-handling
+- Desktop integration
 - ???
