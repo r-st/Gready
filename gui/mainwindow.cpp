@@ -40,7 +40,20 @@ MainWindow::MainWindow(Reader* reader, QWidget *parent) :
     QList<QString> feedHeaderLabels;
     feedHeaderLabels << tr("Name") << tr("Unread");
     ui->feedsView->setHeaderLabels(feedHeaderLabels);
-  
+    
+    // set strech factors
+    ui->splitter_2->setStretchFactor(0, 35); // tags and feeds
+    ui->splitter_2->setStretchFactor(1, 65); // articles
+    
+    // set column width for feeds
+    ui->feedsView->setColumnWidth(0, 180);
+    ui->feedsView->setColumnWidth(1, 20);
+    
+    // set column width for list of articles
+    ui->articlesTableView->setColumnWidth(0, 180);
+    ui->articlesTableView->setColumnWidth(1, 180);
+    ui->articlesTableView->resizeColumnToContents(2);
+    
     // close window
     connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
     
