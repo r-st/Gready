@@ -241,10 +241,12 @@ void Reader::getArticlesFromFeed(QString feedName, QString continuationId)
         // TODO: error handling
         qDebug() << "Error: bad feed name";
     } else {
-        url.append(m_feedList[feedName]->getID());
         qint64 timestamp = QDateTime::currentMSecsSinceEpoch()/1000;
 
         QUrl request(url);
+        // set the path propperly
+        // it prevents breaking the path when original url contains question mark
+        request.setPath(request.path() + m_feedList[feedName]->getID());
         request.addQueryItem(QString("ck"), QString::number(timestamp));
         request.addQueryItem(QString("client"), m_settings.applicationName());
         
