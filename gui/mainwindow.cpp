@@ -54,7 +54,8 @@ MainWindow::MainWindow(Reader* reader, QWidget *parent) :
     connect(m_reader, SIGNAL(articlesFetchingDone(Feed*)), SLOT(showArticlesFromFeed(Feed*)));
     
     // show content of the article on click
-    connect(ui->articlesTableView, SIGNAL(itemClicked(QTreeWidgetItem*,int)), SLOT(loadArticleContent(QTreeWidgetItem*)));
+    //connect(ui->articlesTableView, SIGNAL(itemClicked(QTreeWidgetItem*,int)), SLOT(loadArticleContent(QTreeWidgetItem*)));
+    connect(ui->articlesTableView, SIGNAL(itemSelectionChanged()), SLOT(loadArticleContent()));
     
     ui->articleView->setOpenExternalLinks(true);;
     //loadFeeds();
@@ -178,8 +179,9 @@ void MainWindow::showArticlesFromFeed(Feed* feed)
   ui->articlesTableView->sortItems(2, Qt::DescendingOrder);
 }
 
-void MainWindow::loadArticleContent(QTreeWidgetItem* item)
+void MainWindow::loadArticleContent()
 {
+  QTreeWidgetItem* item = ui->articlesTableView->currentItem();
   Article* article = m_reader->listFeeds().value(item->text(4))->listArticles().value(item->text(3));
   
   if(article == NULL) {
@@ -221,6 +223,7 @@ void MainWindow::loadArticleContent(QTreeWidgetItem* item)
     if(ui->articlesTableView->itemBelow(item) == NULL) {
       Feed* feed = m_reader->listFeeds().value(ui->feedsView->currentItem()->text(0));
       feed->getArticles(true);
+      ui->articlesTableView->scrollToItem(item);
     }
     
     // show article

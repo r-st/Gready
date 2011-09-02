@@ -58,7 +58,7 @@ private:
 public slots:
     void loadFeeds();
     void loadArticlesFromFeed(QTreeWidgetItem* item);
-    void loadArticleContent(QTreeWidgetItem* item);
+    void loadArticleContent();
     void showSettingsWindow();
 
 private slots:
