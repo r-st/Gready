@@ -216,6 +216,14 @@ void MainWindow::loadArticleContent(QTreeWidgetItem* item)
         ui->feedsView->currentItem()->parent()->setText(1, QString::number(tag->getUnreadCount()));
       }
     }
+    
+    // load more articles
+    if(ui->articlesTableView->itemBelow(item) == NULL) {
+      Feed* feed = m_reader->listFeeds().value(ui->feedsView->currentItem()->text(0));
+      feed->getArticles(true);
+    }
+    
+    // show article
     ui->articleView->setHtml(prepareArticleHeader(article) + article->getContent());
   }
 }

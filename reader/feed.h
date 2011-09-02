@@ -99,7 +99,7 @@ public slots:
   /**
    * Fetch articles from feed
    */
-  void getArticles();
+  void getArticles(bool continueFeed = false);
   
   /**
    * Add article to feed

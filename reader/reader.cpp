@@ -234,7 +234,7 @@ void Reader::feedsFetched()
 }
 
 
-void Reader::getArticlesFromFeed(QString feedName)
+void Reader::getArticlesFromFeed(QString feedName, QString continuationId)
 {
     QString url = m_atomUrl;
     if (!m_feedList.contains(feedName)) {
@@ -247,6 +247,10 @@ void Reader::getArticlesFromFeed(QString feedName)
         QUrl request(url);
         request.addQueryItem(QString("ck"), QString::number(timestamp));
         request.addQueryItem(QString("client"), m_settings.applicationName());
+        
+        if(!continuationId.isEmpty()) {
+          request.addQueryItem(QString("c"), continuationId);
+        }
 
         if (!m_feedList[feedName]->getContinuation().isEmpty()) {
             request.addQueryItem(QString("c"), m_feedList[feedName]->getContinuation());

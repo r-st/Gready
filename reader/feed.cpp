@@ -33,13 +33,14 @@ Feed::Feed(Feed& oldFeed)
   m_parrentReader = oldFeed.m_parrentReader;
 }
 
-void Feed::getArticles()
+void Feed::getArticles(bool continueFeed)
 {
   if(m_parrentReader == NULL) { 
     // TODO
     qDebug() << "No reader";
   } else {
-    m_parrentReader->getArticlesFromFeed(m_name);
+    QString continuation = continueFeed ? m_continuation : "";
+    m_parrentReader->getArticlesFromFeed(m_name, continuation);
     connect(m_parrentReader, SIGNAL(articlesFetchingDone(Feed*)), SIGNAL(articlesFetchingDone(Feed*)));
   }
 }

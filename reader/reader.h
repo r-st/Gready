@@ -141,7 +141,7 @@ public slots:
      * Fetch articles from given feed
      * @param feedName name of the feed
      */
-    void getArticlesFromFeed(QString feedName);
+    void getArticlesFromFeed(QString feedName, QString continuationId = "");
     
     /**
      * Returns list of tags
