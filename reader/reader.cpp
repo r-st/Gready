@@ -252,11 +252,6 @@ void Reader::getArticlesFromFeed(QString feedName, QString continuationId)
           request.addQueryItem(QString("c"), continuationId);
         }
 
-        if (!m_feedList[feedName]->getContinuation().isEmpty()) {
-            request.addQueryItem(QString("c"), m_feedList[feedName]->getContinuation());
-        }
-
-
         QNetworkReply* reply = m_manager.get(setAuthHeader(QNetworkRequest(request)));
         //connect(reply, SIGNAL(finished()), SLOT(articlesFromFeedFinished()));
         connect(reply, SIGNAL(finished()), m_signalMapper, SLOT(map()));
