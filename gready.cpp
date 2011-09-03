@@ -39,6 +39,13 @@ gready::gready()
     connect(reader,SIGNAL(feedsFetchingDone()), reader, SLOT(getUnreadCount()));
     connect(reader, SIGNAL(unreadCountDone()), main, SLOT(loadFeeds()));
     
+    
+    // update feeds automatically
+    QSettings settings;
+    m_feedsTimer = new QTimer(this);
+    connect(m_feedsTimer, SIGNAL(timeout()), reader, SLOT(getTags()));
+    m_feedsTimer->start(settings.value("feedUpdate", 5).toInt()*1000*60); // update every "feedUpdate" minutes (default 5)
+    
     //main->setReader(reader);
     main->show();
 }

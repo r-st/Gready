@@ -27,12 +27,15 @@
 #define gready_H
 
 #include <QtGui/QMainWindow>
+#include <QTimer>
 #include "gui/mainwindow.h"
 #include "reader/reader.h"
 
 class gready : public QMainWindow
 {
 Q_OBJECT
+
+  QTimer* m_feedsTimer;
 public:
     gready();
     virtual ~gready();
