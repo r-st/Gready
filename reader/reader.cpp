@@ -30,6 +30,7 @@ Reader::Reader():m_apiUrl("http://www.google.com/reader/api/0/"), m_atomUrl("htt
     m_signalMapper = new QSignalMapper(this);
     getID();
 
+    m_tokenTimer = new QTimer(this);
 }
 
 
@@ -437,6 +438,12 @@ void Reader::tokenFinished()
     m_token = reply->readAll();
     
     emit tokenDone();
+    
+    if(!m_tokenTimer->isActive()) {
+      // token needs to be updated every 30 minutes
+      connect(m_tokenTimer, SIGNAL(timeout()), SLOT(getToken()));
+      m_tokenTimer->start(30*60*1000);
+    }
   }
 }
 

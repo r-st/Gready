@@ -36,6 +36,7 @@
 #include <QXmlStreamReader>
 #include <QSignalMapper>
 #include <QMimeData>
+#include <QTimer>
 
 #include "tag.h"
 #include "feed.h"
@@ -53,6 +54,7 @@ private:
     const QString m_atomUrl;
     QNetworkAccessManager m_manager;
     QSettings m_settings;
+    QTimer* m_tokenTimer;
     
     // list of tags mapped by tag title
     QMap<QString, Tag*> m_tagList;
