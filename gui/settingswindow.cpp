@@ -32,8 +32,6 @@ SettingsWindow::SettingsWindow()
   QFormLayout* formLayout = new QFormLayout;
   QSettings settings;
   
-  //layout->setMinimumWidth(50);
-  
   m_usernameLineEdit = new QLineEdit;
   m_usernameLineEdit->setText(settings.value("username").toString());
   formLayout->addRow(tr("Login:"), m_usernameLineEdit);

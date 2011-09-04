@@ -67,7 +67,6 @@ MainWindow::MainWindow(Reader* reader, QWidget *parent) :
     connect(m_reader, SIGNAL(articlesFetchingDone(Feed*)), SLOT(showArticlesFromFeed(Feed*)));
     
     // show content of the article on click
-    //connect(ui->articlesTableView, SIGNAL(itemClicked(QTreeWidgetItem*,int)), SLOT(loadArticleContent(QTreeWidgetItem*)));
     connect(ui->articlesTableView, SIGNAL(itemSelectionChanged()), SLOT(loadArticleContent()));
     
     ui->articleView->setOpenExternalLinks(true);;
@@ -119,7 +118,6 @@ void MainWindow::loadFeeds()
           
         feedIter++;
       }
-      //tag->addChildren(feeds);
       iter++;
   }
   
@@ -142,9 +140,7 @@ void MainWindow::loadFeeds()
     }
     feedIterator++;
   }
-      
   
-  //ui->feedsView->insertTopLevelItems(0, tags);
   ui->feedsView->expandAll();
 }
 
@@ -198,6 +194,7 @@ void MainWindow::showArticlesFromFeed(Feed* feed)
 void MainWindow::loadArticleContent()
 {
   QTreeWidgetItem* item = ui->articlesTableView->currentItem();
+  
   Article* article = m_reader->listFeeds().value(item->text(4))->listArticles().value(item->text(3));
   
   if(article == NULL) {
@@ -206,6 +203,7 @@ void MainWindow::loadArticleContent()
   } else {
     // set article as read
     if(!article->isRead()) {
+      article->setRead(true);
       m_reader->editTag(article->getId(), item->text(4), Reader::Add, Reader::Read);
     
       QFont font;

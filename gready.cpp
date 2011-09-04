@@ -46,7 +46,6 @@ gready::gready()
     connect(m_feedsTimer, SIGNAL(timeout()), reader, SLOT(getTags()));
     m_feedsTimer->start(settings.value("feedUpdate", 5).toInt()*1000*60); // update every "feedUpdate" minutes (default 5)
     
-    //main->setReader(reader);
     main->show();
 }
 

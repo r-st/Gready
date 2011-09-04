@@ -82,8 +82,9 @@ public:
     
     QMap<QString, Article*> listArticles() { return m_articles; }
     
-    bool operator==(Feed &second) { if(m_id == second.m_id) { return true;} else { return false; } } /**
+    bool operator==(Feed &second) { if(m_id == second.m_id) { return true;} else { return false; } }
     
+  /**
    * Sets number of unread articles
    * @param num number of unread articles
    */

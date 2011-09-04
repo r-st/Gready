@@ -26,7 +26,6 @@
 #include "./reader.h"
 
 Reader::Reader():m_apiUrl("http://www.google.com/reader/api/0/"), m_atomUrl("http://www.google.com/reader/atom/") {
-//connect(&m_manager, SIGNAL(finished(QNetworkReply*)), SLOT(authenticated(QNetworkReply*)));
     m_signalMapper = new QSignalMapper(this);
     getID();
 
@@ -256,7 +255,6 @@ void Reader::getArticlesFromFeed(QString feedName, QString continuationId)
         }
 
         QNetworkReply* reply = m_manager.get(setAuthHeader(QNetworkRequest(request)));
-        //connect(reply, SIGNAL(finished()), SLOT(articlesFromFeedFinished()));
         connect(reply, SIGNAL(finished()), m_signalMapper, SLOT(map()));
 
         m_signalMapper->setMapping(reply, feedName);

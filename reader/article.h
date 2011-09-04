@@ -60,6 +60,9 @@ public:
     bool isRead() { return m_isRead; }
     bool isShared() { return m_isShared; }
     bool isStarred() { return m_isStarred; }
+    void setRead(bool read) { m_isRead = read; }
+    void setShared(bool shared) { m_isShared = shared; }
+    void setStarred(bool starred) { m_isStarred = starred; }
     
 private:
     QDateTime m_published;
