@@ -96,6 +96,7 @@ void MainWindow::loadFeeds()
       if(iter.value()->getUnreadCount() > 0) {
         QFont font;
         font.setBold(true);
+        tag->setFont(0, font);
         tag->setFont(1, font);
       }
       tag->setText(1, QString::number(iter.value()->getUnreadCount()));
@@ -111,6 +112,7 @@ void MainWindow::loadFeeds()
         if(feedIter.value()->getUnreadCount() > 0) {
           QFont font;
           font.setBold(true);
+          feed->setFont(0, font);
           feed->setFont(1, font);
         }
         feed->setText(1, QString::number(feedIter.value()->getUnreadCount()));
@@ -132,6 +134,7 @@ void MainWindow::loadFeeds()
         if(feedIterator.value()->getUnreadCount() > 0) {
           QFont font;
           font.setBold(true);
+          feed->setFont(0, font);
           feed->setFont(1, font);
         }
         feed->setText(1, QString::number(feedIterator.value()->getUnreadCount()));
@@ -217,6 +220,7 @@ void MainWindow::loadArticleContent()
       Feed* feed = m_reader->listFeeds().value(ui->feedsView->currentItem()->text(0));
       feed->setUnreadCount(feed->getUnreadCount() - 1);
       if(feed->getUnreadCount() == 0) {
+        ui->feedsView->currentItem()->setFont(0, font);
         ui->feedsView->currentItem()->setFont(1, font);
       }
       ui->feedsView->currentItem()->setText(1, QString::number(feed->getUnreadCount()));
@@ -226,6 +230,7 @@ void MainWindow::loadArticleContent()
         tag->setUnreadCount(tag->getUnreadCount() - 1);
         
         if(tag->getUnreadCount() == 0) {
+          ui->feedsView->currentItem()->parent()->setFont(0, font);
           ui->feedsView->currentItem()->parent()->setFont(1, font);
         }
         ui->feedsView->currentItem()->parent()->setText(1, QString::number(tag->getUnreadCount()));
