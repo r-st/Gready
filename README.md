@@ -25,4 +25,4 @@ It's easy, just
 2. make
 3. cp gready /directory/with/your/binaries (optional)
 
-Or use this [PKGBUILD](https://github.com/r-st/Gready) if you are using Arch Linux.
+Or use this [PKGBUILD](https://aur.archlinux.org/packages.php?ID=52159) if you are using Arch Linux.
