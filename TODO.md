@@ -1,9 +1,3 @@
-version 0.1:
------------
-
-- Update feeds automatically in loop
-- Fix some bugs
-
 versions after 0.1:
 -----------------
 
