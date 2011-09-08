@@ -69,9 +69,6 @@ MainWindow::MainWindow(Reader* reader, QWidget *parent) :
     // show content of the article on click
     connect(ui->articlesTableView, SIGNAL(itemSelectionChanged()), SLOT(loadArticleContent()));
     
-    ui->articleView->setOpenExternalLinks(true);;
-    //loadFeeds();
-    
 }
 
 MainWindow::~MainWindow()

@@ -24,6 +24,8 @@
 #include <QtGui/QTextBrowser>
 #include <QtGui/QTreeWidget>
 #include <QtGui/QWidget>
+#include <QWebView>
+#include <QtWebKit>
 
 QT_BEGIN_NAMESPACE
 
@@ -38,7 +40,7 @@ public:
     QTreeWidget *feedsView;
     QSplitter *splitter;
     QTreeWidget *articlesTableView;
-    QTextBrowser *articleView;
+    QWebView *articleView;
     QMenuBar *menubar;
     QMenu *menuGready;
     QStatusBar *statusbar;
@@ -71,7 +73,7 @@ public:
         articlesTableView->setHeaderItem(__qtreewidgetitem);
         articlesTableView->setObjectName(QString::fromUtf8("articlesTableView"));
         splitter->addWidget(articlesTableView);
-        articleView = new QTextBrowser(splitter);
+        articleView = new QWebView(splitter);
         articleView->setObjectName(QString::fromUtf8("articleView"));
         splitter->addWidget(articleView);
         splitter_2->addWidget(splitter);
