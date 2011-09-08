@@ -268,11 +268,28 @@ void MainWindow::keyPressEvent(QKeyEvent* event)
 QString MainWindow::prepareArticleHeader(Article* article)
 {
   QString header;
-  header += "<h1>" + article->getTitle() + "</h1>";
-  header += "<h2>" + article->getAuthor() + "</h2>";
-  header += "<p>" + article->getPublished().toString(Qt::SystemLocaleLongDate) + "</p>";
-  header += "<p><a href=\"" + article->getUrl().toString() + "\">" + article->getUrl().toString() + "</a></p>";
-  header += "<hr>";
+  
+  header += "<style> \
+  table { \
+    border: 1px solid black; \
+    padding: 3px; \
+    width: 100%; \
+  } \
+  th { \
+    font-weight: bold; \
+    text-align: left; \
+    border-bottom: 1px solid black; \
+  } \
+  td.label { \
+    font-weight: bold; \
+  }\
+  </style>";
+  header += "<table>";
+  header += "<tr><th colspan=\"2\">" + article->getTitle() + "</th></tr>";
+  header += "<tr><td class=\"label\">" + tr("Author:") + "</td><td>" + article->getAuthor() +"</tr>";
+  header += "<tr><td class=\"label\">" + tr("Published:") + "</td><td>" + article->getPublished().toString(Qt::SystemLocaleLongDate) +"</tr>";
+  header += "<tr><td class=\"label\">" + tr("Url:") + "</td><td><a href=\"" + article->getUrl().toString() + "\">" + article->getUrl().toString() + "</a> </td></tr>";
+  header += "</table><br />";
   
   return header;
 
