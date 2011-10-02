@@ -213,7 +213,11 @@ void MainWindow::loadArticleContent()
       
       // decrease number of unread articles from feed
       Feed* feed = m_reader->listFeeds().value(ui->feedsView->currentItem()->text(0));
-      feed->setUnreadCount(feed->getUnreadCount() - 1);
+      // decrease only if number of unread articles is greater than zero
+      // prevents underflowing of the value
+      if(feed->getUnreadCount() > 0) {
+        feed->setUnreadCount(feed->getUnreadCount() - 1);
+      }
       if(feed->getUnreadCount() == 0) {
         ui->feedsView->currentItem()->setFont(0, font);
         ui->feedsView->currentItem()->setFont(1, font);
@@ -222,7 +226,9 @@ void MainWindow::loadArticleContent()
       
       if(ui->feedsView->currentItem()->parent()) {
         Tag* tag = m_reader->listTags().value(ui->feedsView->currentItem()->parent()->text(0));
-        tag->setUnreadCount(tag->getUnreadCount() - 1);
+        if(tag->getUnreadCount() > 0) { // prevents underflowing
+          tag->setUnreadCount(tag->getUnreadCount() - 1);
+        }
         
         if(tag->getUnreadCount() == 0) {
           ui->feedsView->currentItem()->parent()->setFont(0, font);
