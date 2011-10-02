@@ -510,7 +510,13 @@ void Reader::tagEdited()
 {
   QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
   
-  if(reply->error()) {
+  // Old or none token
+  if(reply->error() == QNetworkReply::AuthenticationRequiredError) {
+    // update token
+    // TODO: need to find out how to call editTag() again after receiving new token
+    getToken();
+    qDebug() << "Tag edited: " << reply->errorString() << ": token updated";
+  } else if(reply->error()) {
     qDebug() << "Tag edited: " << reply->errorString();
   }
 }
