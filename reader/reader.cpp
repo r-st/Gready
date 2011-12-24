@@ -499,7 +499,11 @@ void Reader::editTag(QString articleId, QString feedName, Reader::editAction act
   QByteArray paramsData;
   paramsData = params.encodedQuery();
   
-  QNetworkReply* reply = m_manager.post(setAuthHeader(QNetworkRequest(request)), paramsData);
+  
+  QNetworkRequest nreq = QNetworkRequest(request);
+  nreq.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+  
+  QNetworkReply* reply = m_manager.post(setAuthHeader(nreq), paramsData);
   
   connect(reply, SIGNAL(finished()), SLOT(tagEdited()));
 }
