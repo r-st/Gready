@@ -35,8 +35,7 @@ Reader::Reader():m_apiUrl("http://www.google.com/reader/api/0/"), m_atomUrl("htt
 
 void Reader::getID() {
   if(!m_settings.value("username").toString().isEmpty() && !m_settings.value("password").toString().isEmpty()) {
-    QUrl params;
-    QByteArray data;
+    QUrl params("https://www.google.com/accounts/ClientLogin");
 
     // Prepare authentication data
     params.addQueryItem("service", "reader");
@@ -45,11 +44,10 @@ void Reader::getID() {
     params.addEncodedQueryItem("source", QByteArray(m_settings.applicationName().toAscii()));
     params.addEncodedQueryItem("continue", "http://www.google.com/");
 
-    data = params.encodedQuery();
 
-    QNetworkRequest req(QUrl("https://www.google.com/accounts/ClientLogin"));
+    QNetworkRequest req(params);
 
-    QNetworkReply* reply =  m_manager.post(req, data);
+    QNetworkReply* reply =  m_manager.get(req);
     connect(reply, SIGNAL(finished()), SLOT(authenticated()));
   }
 }
