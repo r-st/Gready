@@ -33,7 +33,7 @@
 #include <QCoreApplication>
 #include <QSettings>
 #include <QDateTime>
-#include <QXmlStreamReader>
+#include <qjson/parser.h>
 #include <QSignalMapper>
 #include <QMimeData>
 #include <QTimer>

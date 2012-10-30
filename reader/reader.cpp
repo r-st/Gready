@@ -87,7 +87,7 @@ void Reader::getTags() {
     qint64 timestamp = QDateTime::currentMSecsSinceEpoch()/1000;
 
     QUrl request(url);
-    request.addQueryItem(QString("output"),QString("xml"));
+    request.addQueryItem(QString("output"),QString("json"));
     request.addQueryItem(QString("ck"), QString::number(timestamp));
     request.addQueryItem(QString("client"), m_settings.applicationName());
 
@@ -103,54 +103,53 @@ void Reader::taglistFinished() {
         // TODO: Process error
         qDebug() << "Tag: " << reply->errorString();
     } else {
-        QXmlStreamReader xml;
-        xml.addData(reply->readAll());
-        if (xml.error()) {
+        QJson::Parser json_parser;
+        bool ok;
+        QVariantMap result;
+        
+        result = json_parser.parse(reply->readAll(), &ok).toMap();
+        if (!ok) {
             // TODO: Process error
-            qDebug() << xml.errorString();
+            qFatal("Tags: parsing error");
+            exit(1);
         }
-        while (!xml.atEnd()) {
-            xml.readNext();
-            if (xml.isStartElement()) {
-                if (xml.name()=="string" && xml.attributes().value("name") == "id") {
-                    QString elementText = xml.readElementText();
-                    QString name;
-                    Tag::type type;
+        
+        foreach(QVariant item, result["tags"].toList()) {
+          QString elementText =  item.toMap()["id"].toString();
+          QString name;
+        Tag::type type;
 
-                    // state element
-                    if (elementText.contains("state/com.")) {
-                        if (elementText.endsWith("starred")) {
-                            type = Tag::Starred;
-                            name = "Starred";
-                        } else if (elementText.endsWith("broadcast")) {
-                            type = Tag::Shared;
-                            name = "Shared";
-                        } else if (elementText.endsWith("blogger-following")) {
-                            type = Tag::Following;
-                            name = "Following";
-                        } else {
-                            type = Tag::StateUnknown;
-                            QString indexStr = "/state/";
-                            int index = elementText.indexOf(indexStr);
-                            name = elementText.mid(index + indexStr.length());
-                        }
-                        // label element
-                    } else {
-                        type = Tag::Label;
-                        QString indexStr = "/label/";
-                        int index = elementText.indexOf(indexStr);
-                        name = elementText.mid(index + indexStr.length());
-                    }
-                    // Create new tag
-                    Tag* newTag = new Tag(name,elementText,type);
-
-                    // Save it
-                    m_tagList.insert(name, newTag);
-                    m_tagListByID.insert(elementText, newTag);
-                }
+        // state element
+        if (elementText.contains("state/com.")) {
+            if (elementText.endsWith("starred")) {
+                type = Tag::Starred;
+                name = "Starred";
+            } else if (elementText.endsWith("broadcast")) {
+                type = Tag::Shared;
+                name = "Shared";
+            } else if (elementText.endsWith("blogger-following")) {
+                type = Tag::Following;
+                name = "Following";
+            } else {
+                type = Tag::StateUnknown;
+                QString indexStr = "/state/";
+                int index = elementText.indexOf(indexStr);
+                name = elementText.mid(index + indexStr.length());
             }
-            xml.readNext();
+            // label element
+        } else {
+            type = Tag::Label;
+            QString indexStr = "/label/";
+            int index = elementText.indexOf(indexStr);
+            name = elementText.mid(index + indexStr.length());
         }
+        // Create new tag
+        Tag* newTag = new Tag(name,elementText,type);
+
+        // Save it
+        m_tagList.insert(name, newTag);
+        m_tagListByID.insert(elementText, newTag);
+      }
       emit tagsFetchingDone();
     }
 
@@ -164,7 +163,7 @@ void Reader::getAllFeeds()
     qint64 timestamp = QDateTime::currentMSecsSinceEpoch()/1000;
 
     QUrl request(url);
-    request.addQueryItem(QString("output"),QString("xml"));
+    request.addQueryItem(QString("output"),QString("json"));
     request.addQueryItem(QString("ck"), QString::number(timestamp));
     request.addQueryItem(QString("client"), m_settings.applicationName());
 
@@ -181,52 +180,31 @@ void Reader::feedsFetched()
         // TODO: Process error
         qDebug() << "Tag: " << reply->errorString();
     } else {
-        QXmlStreamReader xml;
-        xml.addData(reply->readAll());
-        if (xml.error()) {
-            // TODO: Process error
-            qDebug() << xml.errorString();
-        }
-
-        QString id;
-        QString title;
+      QJson::Parser json_parser;
+      QVariantMap result;
+      bool ok;
+      
+      result = json_parser.parse(reply->readAll(), &ok).toMap();
+      if (!ok) {
+          // TODO: Process error
+          qFatal("Feeds: parsing error");
+          exit(1);
+      }
+      foreach(QVariant item, result["subscriptions"].toList()) {
+        QString id = item.toMap()["id"].toString();
+        QString title = item.toMap()["title"].toString();
         bool category = false;
-        Feed* newFeed ;
-
-        while (!xml.atEnd()) {
-            xml.readNext();
-            if (xml.isStartElement()) {
-                // feed address
-                if (xml.name() == "string" && xml.attributes().value("name") == "id" && !category) {
-                    id = xml.readElementText();
-                    // feed title
-                } else if (xml.name() == "string" && xml.attributes().value("name") == "title" && !category) {
-                    title = xml.readElementText();
-                    newFeed = new Feed(title, id, this);
-                    m_feedList.insert(title, newFeed);
-                    m_feedListByID.insert(id, newFeed);
-                    // category name
-                } else if (xml.name() == "string" && xml.attributes().value("name") == "id" && category) {
-                    newFeed->setHasCategory(true);
-                    QString indexStr = "/label/";
-                    QString category;
-                    QString elementText = xml.readElementText();
-                    int index = elementText.indexOf(indexStr);
-                    category= elementText.mid(index + indexStr.length());
-
-                    m_tagList[category]->addFeed(newFeed);
-                    // start of the list of categories
-                } else if (xml.name() == "list" && xml.attributes().value("name") == "categories") {
-                    category = true;
-                }
-                // end of categories list
-            } else if (xml.isEndElement() && xml.name() == "list") {
-                category = false;
-            }
+        Feed* newFeed = new Feed(title, id, this);
+        foreach(QVariant cat, item.toMap()["categories"].toList()) {
+          newFeed->setHasCategory(true);
+          QString category = cat.toMap()["label"].toString();
+          m_tagList[category]->addFeed(newFeed);
         }
         
+        m_feedList.insert(title, newFeed);
+        m_feedListByID.insert(id, newFeed);
+      }
       emit feedsFetchingDone();
-    
     }
     reply->deleteLater();
 }
@@ -234,7 +212,8 @@ void Reader::feedsFetched()
 
 void Reader::getArticlesFromFeed(QString feedName, QString continuationId)
 {
-    QString url = m_atomUrl;
+    QString url = m_apiUrl;
+    url.append("stream/contents/");
     if (!m_feedList.contains(feedName)) {
         // TODO: error handling
         qDebug() << "Error: bad feed name";
@@ -268,81 +247,42 @@ void Reader::articlesFromFeedFinished(QString feedName)
         qDebug() << "Tag: " << reply->errorString();
     } else {
         Feed* feed = m_feedList[feedName];
-        QXmlStreamReader xml;
-        xml.addData(reply->readAll());
-
-        QDateTime published;
-        QUrl articleUrl;
-        QString author;
-        bool inEntry = false;
-        QMimeData articleContent;
-        bool isRead = false;
-        bool isStarred = false;
-        bool isShared = false;
-        QString articleId;
-        QString title;
-
-        while (!xml.atEnd()) {
-            xml.readNext();
-            if (xml.isStartElement()) {
-                // set continuation string
-                if (xml.name() == "continuation") {
-                    feed->setContinuation(xml.readElementText());
-                }
-
-                // start of article entry
-                else if (xml.name() == "entry") {
-                    inEntry = true;
-                }
-                // process article entry
-                else if (inEntry) {
-                    if (xml.name() == "link" ) {
-                        articleUrl = xml.attributes().value("href").toString();    // url of original article
-                    }
-                    else if (xml.name() == "source") {
-                        xml.skipCurrentElement();    // skip <source> ... </source>, nothing important here
-                    }
-                    // google id of article
-                    else if (xml.name() == "id") {
-                        int index;
-                        articleId = xml.readElementText();
-                        index = articleId.lastIndexOf(":");
-                        articleId = articleId.mid(index+1);
-                    } else if (xml.name() == "title") {
-                        title = xml.readElementText();
-                    }
-                    else if (xml.name() == "published") {
-                        published = QDateTime::fromString(xml.readElementText(), Qt::ISODate);
-                    }
-                    else if (xml.name() == "name") {
-                        author = xml.readElementText();
-                    }
-                    else if (xml.name() == "summary") {
-                        articleContent.setHtml(xml.readElementText());
-                    }
-                    else if (xml.name() == "category") {
-                        if (xml.attributes().value("label") == "read") {
-                            isRead = true;
-                        }
-                        else if (xml.attributes().value("label") == "starred") {
-                            isStarred = true;
-                        }
-                        else if (xml.attributes().value("label") == "broadcast") {
-                            isShared = true;
-                        }
-                    }
-                }
-                // end of article entry
-            } else if (xml.isEndElement() && xml.name() == "entry") {
-
-                Article* newArticle = new Article(title, author, articleId, articleUrl, articleContent, published, isRead, isStarred, isShared);
-                m_feedList[feedName]->addArticle(articleId, newArticle);
-                inEntry = false;
-                title = author = articleId = "";
-                articleUrl.clear();
-                articleContent.clear();
-                isRead = isShared = isStarred = false;
-            }
+        QJson::Parser json_parser;
+        QVariantMap result;
+        bool ok;
+      
+        result = json_parser.parse(reply->readAll(), &ok).toMap();
+        if (!ok) {
+          // TODO: Process error
+          qFatal("Feeds: parsing error");
+          exit(1);
+        }
+        
+        foreach(QVariant item, result["items"].toList()) {
+          QDateTime published;
+          QUrl articleUrl;
+          QString author;
+          QMimeData articleContent;
+          bool isRead = false;
+          bool isStarred = false;
+          bool isShared = false;
+          QString articleId;
+          QString title;
+        
+          articleUrl = item.toMap()["alternate"].toList().first().toMap()["href"].toString();
+          author = item.toMap()["author"].toString();
+          articleId = item.toMap()["id"].toString();
+          title = item.toMap()["title"].toString();
+          published = QDateTime::fromTime_t(item.toMap()["published"].toUInt());
+          articleContent.setHtml(item.toMap()["summary"].toMap()["content"].toString());
+          
+          foreach(QVariant cat,  item.toMap()["categories"].toList()) {
+            if(cat.toString().endsWith("read")) { isRead = true; }
+            else if(cat.toString().endsWith("starred")) { isStarred = true; }
+            else if(cat.toString().endsWith("broadcast")) { isShared = true; }
+          }
+          Article* newArticle = new Article(title, author, articleId, articleUrl, articleContent, published, isRead, isStarred, isShared);
+          m_feedList[feedName]->addArticle(articleId, newArticle);
         }
         
       emit articlesFetchingDone(m_feedList[feedName]);
@@ -358,7 +298,7 @@ void Reader::getUnreadCount()
     qint64 timestamp = QDateTime::currentMSecsSinceEpoch()/1000;
 
     QUrl request(url);
-    request.addQueryItem(QString("output"),QString("xml"));
+    request.addQueryItem(QString("output"),QString("json"));
     request.addQueryItem(QString("ck"), QString::number(timestamp));
     request.addQueryItem(QString("client"), m_settings.applicationName());
 
@@ -376,33 +316,27 @@ void Reader::unreadFinished()
         // TODO: Process error
         qDebug() << "Unread: " << reply->errorString();
     } else {
-      QXmlStreamReader xml;
-      xml.addData(reply->readAll());
+      QJson::Parser json_parser;
+      QVariantMap result;
+      bool ok;
       
+      result = json_parser.parse(reply->readAll(), &ok).toMap();
+      if (!ok) {
+        // TODO: Process error
+        qFatal("Feeds: parsing error");
+        exit(1);
+      }
       
-      while(!xml.atEnd()) {
-        xml.readNext();
-        if(xml.isStartElement() && xml.name() == "object") {
-          QString id;
-          unsigned unread;
-          while(!xml.isEndElement() || xml.name() != "object") {
-            if(xml.isStartElement()) {
-              if(xml.name() == "string") {
-                id = xml.readElementText();
-              } else if (xml.name() == "number" && xml.attributes().value("name") == "count") {
-                unread = xml.readElementText().toUInt();
-              }
-            }
-            xml.readNext();
+      foreach(QVariant item, result["unreadcounts"].toList()) {
+        QString id = item.toMap()["id"].toString();
+        uint unread = item.toMap()["count"].toUInt();
+        if(id.startsWith("feed")) {
+          if(m_feedListByID.contains(id)) {
+            m_feedListByID[id]->setUnreadCount(unread);
           }
-          if(id.startsWith("feed")) {
-            if(m_feedListByID.contains(id)) {
-              m_feedListByID[id]->setUnreadCount(unread);
-            }
-          } else if(id.startsWith("user")) {
-            if(m_tagListByID.contains(id)) {
-              m_tagListByID[id]->setUnreadCount(unread);
-            }
+        } else if(id.startsWith("user")) {
+          if(m_tagListByID.contains(id)) {
+            m_tagListByID[id]->setUnreadCount(unread);
           }
         }
       }
@@ -489,7 +423,7 @@ void Reader::editTag(QString articleId, QString feedName, Reader::editAction act
   params.addQueryItem("s", m_feedList[feedName]->getID());
   
   // add article id
-  params.addQueryItem("i", "tag:google.com,2005:" + articleId);
+  params.addQueryItem("i", articleId);
   
   params.addQueryItem("async", "true");
   
