@@ -258,6 +258,7 @@ void Reader::articlesFromFeedFinished(QString feedName)
           exit(1);
         }
         
+        feed->setContinuation(result["continuation"].toString());
         foreach(QVariant item, result["items"].toList()) {
           QDateTime published;
           QUrl articleUrl;
