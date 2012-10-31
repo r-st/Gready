@@ -448,7 +448,7 @@ void Reader::tagEdited()
   QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
   
   // Old or none token
-  if(reply->error() == QNetworkReply::ContentAccessDenied) {
+  if(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 400) {
     // update token
     // TODO: need to find out how to call editTag() again after receiving new token
     getToken();
